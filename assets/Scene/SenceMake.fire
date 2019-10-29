@@ -66,10 +66,10 @@
     "_level": 0,
     "_components": [
       {
-        "__id__": 29
+        "__id__": 30
       },
       {
-        "__id__": 30
+        "__id__": 31
       }
     ],
     "_prefab": null,
@@ -155,10 +155,10 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 27
+        "__id__": 28
       },
       {
-        "__id__": 28
+        "__id__": 29
       }
     ],
     "_prefab": null,
@@ -1050,7 +1050,11 @@
     "_children": [],
     "_active": true,
     "_level": 2,
-    "_components": [],
+    "_components": [
+      {
+        "__id__": 27
+      }
+    ],
     "_prefab": null,
     "_opacity": 255,
     "_color": {
@@ -1062,8 +1066,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
+      "width": 158,
+      "height": 201
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1092,7 +1096,39 @@
     "_skewY": 0,
     "_is3DNode": false,
     "groupIndex": 0,
-    "_id": "1aXKkBo/hCUoJMmX60SDfY"
+    "_id": "83/3r3//hGgb7WbO+hQB6I"
+  },
+  {
+    "__type__": "cc.Sprite",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 26
+    },
+    "_enabled": true,
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
+    "_spriteFrame": {
+      "__uuid__": "410cd267-3128-4904-850f-8c707cafd276"
+    },
+    "_type": 0,
+    "_sizeMode": 1,
+    "_fillType": 0,
+    "_fillCenter": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_fillStart": 0,
+    "_fillRange": 0,
+    "_isTrimmedMode": true,
+    "_atlas": null,
+    "_id": "44g0bjnIxBmJwPXjFgj5Z8"
   },
   {
     "__type__": "cc.Camera",
@@ -1137,7 +1173,9 @@
       "__id__": 3
     },
     "_enabled": true,
-    "basket": null,
+    "basket": {
+      "__id__": 26
+    },
     "trash": {
       "__id__": 23
     },
@@ -1179,6 +1217,7 @@
     "camera": {
       "__id__": 3
     },
+    "foodPlace": null,
     "_id": "6fDTPqa51DeL+ZmPsAIcHp"
   }
 ]

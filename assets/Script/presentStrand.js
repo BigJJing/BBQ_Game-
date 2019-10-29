@@ -82,13 +82,10 @@ cc.Class({
 
     //取消移动
     mouseEnd: function(event){
-      var basketParent = cc.find("Canvas").getChildByName('Main Camera').getChildByName('basket');
-      this.basket = basketParent.getChildByName('container');
-
-      var basketLeft = basketParent.x - this.basket.width/2;
-      var basketRight = basketParent.x + this.basket.width/2;
-      var basketTop =  basketParent.y + this.basket.height/2;
-      var basketBottom = basketParent.y - this.basket.height/2;
+      var basketLeft = this.basket.x - this.basket.width/2;
+      var basketRight = this.basket.x + this.basket.width/2;
+      var basketTop =  this.basket.y + this.basket.height/2;
+      var basketBottom = this.basket.y - this.basket.height/2;
 
       var trashLeft =  this.trash.x - this.trash.width/2;
       var trashRight = this.trash.x + this.trash.width/2;

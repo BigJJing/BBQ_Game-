@@ -73,7 +73,6 @@ cc.Class({
         //data.presentSize = 0;
         //提醒要放到篮子
       }
-      console.log(this.presentStrand)
     },
 
     //生成单个食物，并放置到砧板上
@@ -84,6 +83,7 @@ cc.Class({
         singleFood.parent = that.presentStrand;
         var sp = singleFood.addComponent(cc.Sprite);
         sp.spriteFrame = spriteFrame;
+        singleFood.name = imageName;
         singleFood.scale = 0.5;
         singleFood.x = that.node.x;
         singleFood.y = that.node.y;

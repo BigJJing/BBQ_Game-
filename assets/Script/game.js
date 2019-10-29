@@ -12,10 +12,6 @@ cc.Class({
           default: null,
           type: cc.Node
         },
-        basketContainer:{
-          default: null,
-          type: cc.Node
-        },
         foodPlace:{
           default: null,
           type:cc.Node
@@ -26,22 +22,11 @@ cc.Class({
 
     onLoad () {
       var basket = com.data.basket;
-      if(basket == null){
-        var that = this;
-        cc.loader.loadRes('basket',cc.SpriteFrame,function(err,spriteFrame){
-          var basketNode = new cc.Node;
-          basketNode.parent = that.basket
-          var sp = basketNode.addComponent(cc.Sprite);
-          sp.spriteFrame = spriteFrame;
-          basketNode.name = "container";
-          basketNode.width = 158;
-          basketNode.height = 201;
-          that.basketContainer = basketNode;
-        })
-      }
-      else{
-        basket.parent = this.basket;
-        this.basketContainer = basket
+      if(basket !== null && basket.childrenCount !== 0){
+        for(var i=0;i<basket.childrenCount;i++){
+          var node = cc.instantiate(basket.children[i])
+          node.parent = this.basket;
+        }
       }
       var foodPlace = com.data.foodPlace;
       if(foodPlace !== null && foodPlace.childrenCount !== 0){
@@ -66,7 +51,8 @@ cc.Class({
     changeSence: function(e){
       var nowSence = cc.director.getScene();
       if(e.keyCode == 65 || e.keyCode == 68){
-        com.data.basket = cc.instantiate(this.basketContainer);
+        com.data.basket = cc.instantiate(this.basket);
+        console.log(com.data.basket)
         if(nowSence.name == "SenceCook"){
           com.data.foodPlace = cc.instantiate(this.foodPlace);
           cc.director.loadScene("SenceMake")
