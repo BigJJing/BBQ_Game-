@@ -95,9 +95,12 @@ cc.Class({
         var x = -that.node.x;
         //var y = (that.presentStrand.y - that.presentStrand.height/4)/6 * (7-com.data.foods[imageName]);\
         console.log(singleFood.height);
-        var y =100 - that.node.y - singleFood.height - (6- com.data.presentSize - com.data.foods[imageName])*35 ;
-        //var y = 0
-        console.log(y)
+        if(com.data.foods[imageName]==6){
+          var y = -220
+        }
+        else{
+          var y =100 - that.node.y - singleFood.height/2 - (6- com.data.presentSize - com.data.foods[imageName])*35 ;
+        }
         //console.log()
         var action = cc.spawn(cc.moveBy(0.5,x,y), cc.scaleTo(0.5,1,1)).easing(cc.easeCubicActionOut());
         singleFood.runAction(action);

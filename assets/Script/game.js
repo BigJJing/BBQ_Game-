@@ -21,6 +21,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+      console.log(com.data.strands)
       var basket = com.data.basket;
       if(basket !== null && basket.childrenCount !== 0){
         for(var i=0;i<basket.childrenCount;i++){

@@ -18,13 +18,17 @@ cc.Class({
         default: null,
         type: cc.Node
       },
-      grill:{
+      grill: {
         default: null,
         type: cc.Node
       },
-      foodPlace:{
+      foodPlace: {
         default: null,
         type: cc.Node
+      },
+      foodCookingParticle: {
+        default: null,
+        type: cc.Prefab
       },
       targetOriginX:0,
       targetOriginY:0,
@@ -67,7 +71,6 @@ cc.Class({
         for(var k = 1; k < target.childrenCount; k++){
           targetType += target.children[k].name
         }
-        console.log(targetType)
         for(var i = 0; i < children.length; i++){
           if(children[i]== target){
             this.iSelect = i;
@@ -101,9 +104,9 @@ cc.Class({
       //x:-744 ~194  y: -200~100
       var grillLeft = -744;
       var grillRight = -100;
-      var grillTop = -200;
-      var grillBottom = 100;
-      if(target.x >= grillLeft && target.x <= grillRight && target.y >= grillTop && target.y <= grillBottom){
+      var grillTop = 100;
+      var grillBottom = -200;
+      if(target.x >= grillLeft && target.x <= grillRight && target.y <= grillTop && target.y >= grillBottom){
         var distance = this.node.x - this.grillPosition.x;
         //将该节点移动到食物节点上
         var foods = this.foodPlace.children;
@@ -127,6 +130,12 @@ cc.Class({
         target.off(cc.Node.EventType.TOUCH_END, this.mouseEnd, this)
         target.off(cc.Node.EventType.TOUCH_CANCEL, this.mouseEnd, this)
         this.targetBeforeYLength = 0;
+        this.changeStrands(target);
+        //调用foodPlace上的移动函数
+        var that = this.foodPlace.getComponent('foodPlace')
+        target.on(cc.Node.EventType.TOUCH_MOVE, that.mouseMove,that)
+        target.on(cc.Node.EventType.TOUCH_END, that.mouseEnd,that)
+        target.on(cc.Node.EventType.TOUCH_CANCEL, that.mouseEnd,that)
       }
       else{
         //位置复原
@@ -156,5 +165,56 @@ cc.Class({
       }
       children[children.length - 1]=temp;
       console.log(children)
+    },
+
+    //全局变量strands中减去target类型
+    changeStrands: function(target){
+      var strands = com.data.strands;
+      console.log(strands)
+      var targetType = "";
+      for(let i = 1; i < target.childrenCount; i++){
+        targetType += target.children[i].name
+      }
+      for(let i = 0; i < strands.length; i++){
+        var type = strands[i].type
+        var str = ""
+        for(let j = 0; j < type.length; j++){
+          str += type[j]
+        }
+        console.log(str)
+        if(str == targetType){
+          strands[i].length--;
+          if(strands[i].length==0){
+            strands.splice(i,1);
+          }
+        }
+      }
+      console.log(strands)
+      com.data.strands = strands;
+    },
+
+    //食物放在烤架上：出现烤的特效
+    onGrill: function(target){
+      /*
+      var oil = cc.instantiate(this.foodCookingParticle);
+      console.log(oil);
+      oil.setPosition(cc.v2(0,0));
+      oil.height = target.height;
+      oil.width = target.width/2;
+      target.addChild(oil);
+      */
+      console.log(target)
+      var child = target.children;
+      for(var i=0;i<child.length;i++){
+        if(i !== 0){
+          var oil = cc.instantiate(this.foodCookingParticle);
+          oil.setPosition(cc.v2(0,0));
+          oil.height = child[i].height;
+          oil.width = child[i].width;
+          oil.zIndex = child[i].zIndex - 1;
+          child[i].addChild(oil)
+        }
+      }
+      console.log(target)
     }
 });

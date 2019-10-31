@@ -2,7 +2,7 @@
 
 module.exports = {
 
-  data : {
+  data: {
     strand: [],   //当前串
     strands:[],   //所有串
     presentSize:0,  //当前串的大小的
