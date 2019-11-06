@@ -26,6 +26,10 @@ cc.Class({
         default: null,
         type: cc.Node
       },
+      smoke: {
+        default: null,
+        type: cc.Node
+      },
       foodCookingParticle: {
         default: null,
         type: cc.Prefab
@@ -41,7 +45,6 @@ cc.Class({
     onLoad () {
       //监听篮子的点击事件
       var children = this.node.children;
-      console.log(children)
       for(var i=0;i<children.length;i++){
         children[i].on(cc.Node.EventType.TOUCH_MOVE, this.mouseMove, this)
         children[i].on(cc.Node.EventType.TOUCH_END, this.mouseEnd, this)
@@ -96,6 +99,10 @@ cc.Class({
 
     mouseEnd: function(e){
       var target = e.target;
+      //防止鼠标点击事件
+      if(!this.isLight){
+        return;
+      }
       this.isLight = false;
       var anim = this.grillPosition.getComponent(cc.Animation);
       anim.stop();
@@ -125,6 +132,9 @@ cc.Class({
         //判断防止食物的位置在哪里 x=-300 -200 -100 0 100 200 300 400
         target.y = 0;
         target.x =target.x + distance - target.width/2;
+        var strandsInGrill = com.data.strandsInGrill
+        target.name = "strand"+strandsInGrill.length;
+
         //取消监听
         target.off(cc.Node.EventType.TOUCH_MOVE, this.mouseMove, this)
         target.off(cc.Node.EventType.TOUCH_END, this.mouseEnd, this)
@@ -132,13 +142,14 @@ cc.Class({
         this.targetBeforeYLength = 0;
         this.changeStrands(target);
         //调用foodPlace上的移动函数
+        this.onGrill();
         var that = this.foodPlace.getComponent('foodPlace')
         target.on(cc.Node.EventType.TOUCH_MOVE, that.mouseMove,that)
+        target.on(cc.Node.EventType.TOUCH_START, that.mouseStart,that)
         target.on(cc.Node.EventType.TOUCH_END, that.mouseEnd,that)
         target.on(cc.Node.EventType.TOUCH_CANCEL, that.mouseEnd,that)
       }
       else{
-        //位置复原
         this.doRecover(target);
       }
     },
@@ -157,20 +168,18 @@ cc.Class({
     //改变食物的顺序
     changeFoodOrder: function(target){
       var children = this.node.children;
-      console.log(children)
       //将最上面的和当前的食物交换位置
       var temp = children[this.iSelect];
       for(var i=this.iSelect;i<children.length;i++){
         children[i] = children[i+1]
       }
       children[children.length - 1]=temp;
-      console.log(children)
     },
 
     //全局变量strands中减去target类型
     changeStrands: function(target){
       var strands = com.data.strands;
-      console.log(strands)
+
       var targetType = "";
       for(let i = 1; i < target.childrenCount; i++){
         targetType += target.children[i].name
@@ -181,7 +190,6 @@ cc.Class({
         for(let j = 0; j < type.length; j++){
           str += type[j]
         }
-        console.log(str)
         if(str == targetType){
           strands[i].length--;
           if(strands[i].length==0){
@@ -189,21 +197,26 @@ cc.Class({
           }
         }
       }
-      console.log(strands)
+
+      var data = {
+        name:target.name,
+        typeName:targetType,
+        front:0,
+        back:0,
+        seasoning:[],
+        selectedFace:"back"
+      }
+      com.data.strandsInGrill.push(data)
       com.data.strands = strands;
     },
 
     //食物放在烤架上：出现烤的特效
-    onGrill: function(target){
+    onGrill: function(){
+      //起烟
+      var anim = this.smoke.getComponent(cc.Animation);
+      anim.play();
       /*
-      var oil = cc.instantiate(this.foodCookingParticle);
-      console.log(oil);
-      oil.setPosition(cc.v2(0,0));
-      oil.height = target.height;
-      oil.width = target.width/2;
-      target.addChild(oil);
-      */
-      console.log(target)
+      //溅油特效
       var child = target.children;
       for(var i=0;i<child.length;i++){
         if(i !== 0){
@@ -216,5 +229,7 @@ cc.Class({
         }
       }
       console.log(target)
+      */
     }
+
 });

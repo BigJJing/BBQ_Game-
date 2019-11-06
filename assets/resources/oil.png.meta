@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "3299655d-108c-4ab3-8e8a-dedf36a369c5",
+  "uuid": "0d2c05de-e881-44be-8955-066d1ee3b0c7",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,10 +9,10 @@
   "packable": true,
   "platformSettings": {},
   "subMetas": {
-    "油刷": {
+    "oil": {
       "ver": "1.0.4",
-      "uuid": "ba92549c-a5d9-4236-bc64-451f73ff6f67",
-      "rawTextureUuid": "3299655d-108c-4ab3-8e8a-dedf36a369c5",
+      "uuid": "cfa86f13-c961-4a5d-bcdc-bc3f403764c6",
+      "rawTextureUuid": "0d2c05de-e881-44be-8955-066d1ee3b0c7",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -20,10 +20,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 65,
-      "height": 80,
-      "rawWidth": 65,
-      "rawHeight": 80,
+      "width": 80,
+      "height": 88,
+      "rawWidth": 80,
+      "rawHeight": 88,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

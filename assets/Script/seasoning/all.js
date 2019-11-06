@@ -19,12 +19,12 @@ cc.Class({
          type: cc.Node
        },
        //孜然粉
-       CuminPowder:{
+       cuminPowder: {
          default: null,
          type: cc.Node
        },
        //油
-       oil:{
+       oil: {
          default: null,
          type: cc.Node
        },
@@ -58,8 +58,9 @@ cc.Class({
 
     //鼠标点击事件
     mouseStart:function(e){
-      console.log(e.target)
+
       if(this.node.opacity == 0){
+        this.reNewAll();
         this.node.opacity = 255;
         cc.game.canvas.style.cursor = "";
       }
@@ -73,23 +74,29 @@ cc.Class({
           cc.game.canvas.style.cursor = "url('/res/import/07/075e9abc-a512-4e7b-8bea-bb93b30f5557.png'),auto";
         }
         else if(target.name == "seasoning_oli"){
-          cc.game.canvas.style.cursor = "url('/res/import/a4/a42ccd2f-1a30-4456-9d0e-de2147d17477.png'),auto";
+          cc.game.canvas.style.cursor = "url('/res/import/32/3299655d-108c-4ab3-8e8a-dedf36a369c5.png'),auto";
         }
+        this.isSelect = true;
+        console.log(this.node)
         this.node.opacity = 0;
+
       }
     },
 
     //鼠标结束点击
     mouseEnd:function(){
-      console.log("mouseEnd")
+
     },
 
     //位置还原
     reNewAll: function(){
-      console.log("reNewAll")
+
       this.paprika.opacity = 255;
-      this.CuminPowder.opacity = 255;
+      this.cuminPowder.opacity = 255;
       this.oil.opacity = 255;
+      this.paprika.getComponent('all').isSelect = false;
+      this.cuminPowder.getComponent('all').isSelect = false;
+      this.oil.getComponent('all').isSelect = false;
     },
 
 });

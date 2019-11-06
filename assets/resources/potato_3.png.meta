@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "3299655d-108c-4ab3-8e8a-dedf36a369c5",
+  "uuid": "b951996b-3171-48c9-b415-76fde56a8ab5",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,10 +9,10 @@
   "packable": true,
   "platformSettings": {},
   "subMetas": {
-    "油刷": {
+    "potato_3": {
       "ver": "1.0.4",
-      "uuid": "ba92549c-a5d9-4236-bc64-451f73ff6f67",
-      "rawTextureUuid": "3299655d-108c-4ab3-8e8a-dedf36a369c5",
+      "uuid": "f6a67986-3d6a-4b93-9f14-a9c4bf9d4a08",
+      "rawTextureUuid": "b951996b-3171-48c9-b415-76fde56a8ab5",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -20,10 +20,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 65,
-      "height": 80,
-      "rawWidth": 65,
-      "rawHeight": 80,
+      "width": 97,
+      "height": 82,
+      "rawWidth": 97,
+      "rawHeight": 82,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
