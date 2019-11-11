@@ -31,10 +31,17 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-      var presentStrand = this.createPresentStrand();
-      this.initStick(presentStrand);
-      this.presentStrand = presentStrand;
+      var presentStrandInData = com.data.presentStrand;
+      if(presentStrandInData != null){
+        presentStrandInData.parent = this.node;
+        this.presentStrand = presentStrandInData;
 
+      }
+      else{
+        var presentStrand = this.createPresentStrand();
+        this.initStick(presentStrand);
+        this.presentStrand = presentStrand;
+      }
       this.presentStrand.on(cc.Node.EventType.TOUCH_MOVE, this.mouseMove, this);
       this.presentStrand.on(cc.Node.EventType.TOUCH_END, this.mouseEnd, this);
     },

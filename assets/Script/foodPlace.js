@@ -186,12 +186,9 @@ cc.Class({
 
     //改变食物熟度
     changeFoodRipe(name,target){
-      console.log(name,target.name)
-      if(target.name != name){
-        cc.loader.loadRes(name, cc.SpriteFrame, function (err, spriteFrame) {
-            target.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-        });
-      }
+      cc.loader.loadRes(name, cc.SpriteFrame, function (err, spriteFrame) {
+          target.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+      });
 
     },
 
