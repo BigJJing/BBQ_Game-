@@ -20,25 +20,31 @@ module.exports = {
     foodPlace:null,
     //保存处理板上的食物
     presentStrand:null,
-    //保存客人
+    //保存客人Node
     guest:null,
     //烤的时间计时器
     timer:null,
+    //计时（客人出现时间）
+    timeShow:0,
     //当前的客人信息：基本信息，点的食物，
     /*
       guests{
+        id:0  , //id为序号 0,1,2,3
         guest:{
           name:"",
           type:"kind",
           appearance:""
         },
         food:"",
-        number:1
+        number:1,
+        mood:120  //120秒就离开
     }
     */
     guests:[
         {},{},{},{}
     ],
+    guestsNum:0,
+    leaveGuest:[],
     //保存对话
     /*
     {
@@ -52,12 +58,13 @@ module.exports = {
     //游戏设置
     //一个时间游戏计时器：随机在某个时间点来客人
     settings:{
-      minTimeForGuest: 10000, //单位：ms
-      guestNumber: 10,  //本场游戏来的客人总数
+      timeForGame:10, //min
+      timeForGuest: 10, //每n秒（5的倍数）内出现一个人，用来确定游戏的难度
     },
     calcTime(){
       var that = this;
-        that.timer=setInterval(function(){
+      that.timer=setInterval(function(){
+        //对食物的熟度计时
         for(var i=0;i<that.strandsInGrill.length;i++){
           if(that.strandsInGrill[i].selectedFace == "back"){
             that.strandsInGrill[i].back += 5
@@ -66,29 +73,42 @@ module.exports = {
             that.strandsInGrill[i].front += 5
           }
         }
+        /*
+        if(that.guestsNum==0){
+          that.guestsNum = 1;
+        }
+        */
+        //客人的出现计时
+        if(that.timeShow == that.settings.timeForGuest){
+          that.timeShow = -5;
+          if(that.guestsNum < 4){
+            that.guestsNum ++;
+          }
+        }
+        that.timeShow += 5;
+        //客人的心情计时
+        for(var j = 0; j < that.guests.length; j++){
+          var str = JSON.stringify(that.guests[j]);
+          if(str !== "{}"){
+            console.log(that.guests[j].mood)
+            if(that.guests[j].mood <= 0){
+              //离开
+              that.leaveGuest.push(that.guests[j])
+            }
+            else{
+              that.guests[j].mood -= 5;
+            }
+
+          }
+        }
       },5000)
     },
     clearTime(){
       clearInterval(this.timer)
     },
-    //判断客人是否已满(四个)
-    isGuestFull(){
-      var arr = [];
-      for(var i = 0; i < this.guests.length; i++){
-        var str = JSON.stringify(this.guests[i]);
-        if(str == "{}"){
-          arr.push(i)
-        }
-      }
-      if(arr.length == 0){
-        return true;  //满了
-      }
-      else{
-        return false;   //没满
-      }
-    },
     //获取客人的随机位置并返回
     getGuestPosition(person){
+      console.log(person)
       var arr = [];
       for(var i = 0; i < this.guests.length; i++){
         var str = JSON.stringify(this.guests[i]);
@@ -98,17 +118,16 @@ module.exports = {
       }
       var num = Math.floor(Math.random() * arr.length);
       this.guests[arr[num]].guest = person;
+      this.guests[arr[num]].mood = 30;
       return arr[num]
     },
     findGuestByName(name){
       console.log(name)
-      console.log(this.guests)
       for(var i = 0; i < this.guests.length; i++){
         if(JSON.stringify(this.guests[i])!= "{}" && this.guests[i].guest.name == name){
             return i;
         }
       }
-      console.log("error in " + name)
       return false;
     },
     //保存对话：客人特征，对话内容

@@ -71,7 +71,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Canvas",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -596,6 +596,7 @@
     },
     "_enabled": true,
     "position": [],
+    "timer": null,
     "dishes": {
       "__id__": 13
     },
@@ -1099,7 +1100,7 @@
   {
     "__type__": "cc.Node",
     "_name": "dialog",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -3207,7 +3208,7 @@
   {
     "__type__": "cc.Node",
     "_name": "menu",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -3297,7 +3298,7 @@
   {
     "__type__": "cc.Node",
     "_name": "dialogMenu",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -3666,7 +3667,7 @@
   {
     "__type__": "cc.Node",
     "_name": "time",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -3957,7 +3958,7 @@
   {
     "__type__": "cc.Node",
     "_name": "GameMenu",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -4047,7 +4048,7 @@
   {
     "__type__": "cc.Node",
     "_name": "money",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },

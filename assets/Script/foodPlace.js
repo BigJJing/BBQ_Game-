@@ -44,7 +44,9 @@ cc.Class({
         children[i].on(cc.Node.EventType.TOUCH_END,this.mouseEnd,this);
         children[i].on(cc.Node.EventType.TOUCH_CANCEL,this.mouseEnd,this);
       }
-      com.data.calcTime();
+      if(com.data.timer == null){
+        com.data.calcTime();
+      }
     },
 
     mouseStart: function(e){

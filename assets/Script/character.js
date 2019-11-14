@@ -7,6 +7,8 @@ cc.Class({
 
     properties: {
       position:[],  //客人位置
+      timerShow:null,
+      timerLeave:null,
       dishes:{
         default:null,
         type:cc.Node
@@ -38,7 +40,13 @@ cc.Class({
       }
       //游戏开始2秒后人物出场
       if(com.data.guest == null){
-        setTimeout(()=>this.showGuest(this),2000)
+        com.data.guestsNum = 1;
+        var component = this;
+        //cocos自带计时器：绑定组件，只执行一次，2后执行
+        component.scheduleOnce(function() {
+           // 这里的 this 指向 component
+           this.showGuest();
+       }, 2);
       }
       else{
         var guests = com.data.guest.children;
@@ -46,34 +54,51 @@ cc.Class({
         while(guests.length != 0){
           var presentNode = guests[0]
           //为还没点单的客人添加监听
-          if(presentNode.childrenCount > 0){
+          if(presentNode.childrenCount > 0 ){
             presentNode.on(cc.Node.EventType.TOUCH_START,this.guestTalk,this)
           }
-          //console.log(this.node)
           presentNode.parent = this.node
         }
-        if(!com.data.isGuestFull()){
-          var time = com.data.settings.minTimeForGuest + Math.floor(Math.random()*com.data.settings.minTimeForGuest)
-          setTimeout(()=>this.showGuest(this),5000)
+        var addNum = com.data.guestsNum - this.node.childrenCount;
+        if(addNum > 0){
+          for(let i = 0; i < addNum;i++){
+            this.showGuest()
+          }
         }
       }
+      //客人离开
+      this.leave();
+      //控制客人出现
+      var that = this;
+      this.timerShow = setInterval(function(){
+        if(com.data.guestsNum < 4){
+          that.showGuest();
+          com.data.guestsNum ++;
+        }
+      },com.data.settings.timeForGuest*1000)
 
+      this.timerLeave = setInterval(function(){
+        //心情为0时离开
+        that.leave();
+      },2000)
     },
 
     start () {
 
     },
 
+    onDestroy(){
+      clearInterval(this.timerShow)
+      clearInterval(this.timerLeave)
+    },
     // update (dt) {},
 
     showGuest: function(){
       var that = this;
       var character = characters.data.character;
-      var person = characters.data.show();
+      var person = characters.data.show(com.data.guests);
       var guestNum = com.data.getGuestPosition(person);
       var imageName = "character/" + person.name;
-      console.log(that)
-      console.log(that.node)
       cc.loader.loadRes(imageName,cc.SpriteFrame,function(err,spriteFrame){
         var node = new cc.Node;
         //node.addComponent(cc.Sprite).spriteFrame = spriteFrame;
@@ -100,10 +125,6 @@ cc.Class({
           node.on(cc.Node.EventType.TOUCH_START,that.guestTalk,that)
         })
       })
-      if(!com.data.isGuestFull()){
-        var time = com.data.settings.minTimeForGuest + Math.floor(Math.random()*com.data.settings.minTimeForGuest)
-        setTimeout(()=>this.showGuest(this),5000)
-      }
     },
     //发起对话
     guestTalk: function(e) {
@@ -126,6 +147,7 @@ cc.Class({
       this.dialogBtn.getComponent(cc.Button).interactable = true;
       //this.order.string = guestTalk
       var guestIndex = com.data.findGuestByName(name)
+      com.data.guests[guestIndex].id = guestIndex;
       com.data.guests[guestIndex].food = food.name;
       com.data.guests[guestIndex].number = number[0];
       com.data.saveDialog(guest.appearance,guestTalk)
@@ -133,5 +155,34 @@ cc.Class({
       node.children[0].destroy();
       node.off(cc.Node.EventType.TOUCH_START,this.guestTalk,this);
     },
+
+    leave: function(){
+      while(com.data.leaveGuest.length != 0){
+        var leaveOne = com.data.leaveGuest[0];
+        var allGuests = this.node.children;
+        for(var i = 0; i < allGuests.length; i++){
+          if(allGuests[i].name == leaveOne.guest.name){
+            allGuests[i].destroy();
+            com.data.guestsNum --;
+            com.data.leaveGuest.splice(0,1);
+          }
+        }
+        var index = com.data.findGuestByName(leaveOne.guest.name);
+        if(index === false){
+          console.err("error: can't find leave guest named" + leaveOne.guest.name)
+        }
+        else{
+          //删除聊天记录
+          for(var i = 0; i <com.data.dialogs.length; i++){
+            if(com.data.dialogs[i].appearance == com.data.guests[index].guest.appearance){
+              com.data.dialogs.splice(i,1)
+            }
+          }
+          com.data.guests[index] = {};
+        }
+
+
+      }
+    }
 
 });

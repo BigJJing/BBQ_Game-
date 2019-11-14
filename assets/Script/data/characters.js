@@ -6,12 +6,50 @@ module.exports = {
         type:'kind',
         appearance:'略显颓废的黄头发男人'
       },
+      {
+        name:"catGirl",
+        type:'kind',
+        appearance:'抱着猫的小女孩'
+      },
+      {
+        name:"candy",
+        type:'kind',
+        appearance:'穿着正式的女生'
+      },
+      {
+        name:"littleAngal",
+        type:'kind',
+        appearance:'可爱的蓝裙子女孩'
+      },
+      {
+        name:"sugar",
+        type:'kind',
+        appearance:'蓝裙子大女孩'
+      }
     ],
     //随机派出人物
-    show(){
+    show(guests){
+      console.log(guests)
+      var nameArr = [];
+      var characterArr = [];
+      for(let i = 0; i < guests.length; i++){
+        var str = JSON.stringify(guests[i])
+        if(str != "{}"){
+          console.log(str)
+          nameArr.push(guests[i].guest.name)
+        }
+      }
       var len = this.character.length;
-      var num = Math.floor(Math.random()*len);
-      return this.character[num]
+      for(let i = 0; i < len; i++){
+        if(nameArr.indexOf(this.character[i].name) == -1){
+          characterArr.push(this.character[i])
+        }
+      }
+      console.log(nameArr)
+      var num = Math.floor(Math.random()*characterArr.length);
+      console.log(characterArr)
+      console.log(num)
+      return characterArr[num]
     },
     findByName(name){
       for(var i = 0; i < this.character.length; i++){
