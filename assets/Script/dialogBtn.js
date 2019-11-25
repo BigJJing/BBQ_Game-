@@ -7,6 +7,7 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+var com = require('../common')
 
 cc.Class({
     extends: cc.Component,
@@ -19,7 +20,8 @@ cc.Class({
         characters: {
           default: null,
           type: cc.Node
-        }
+        },
+        evaluationGuest:null
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -27,12 +29,18 @@ cc.Class({
     // onLoad () {},
 
     start () {
-      this.node.on(cc.Node.EventType.TOUCH_START, this.mouseStart, this)
+      this.node.on(cc.Node.EventType.TOUCH_START, this.mouseStart, this);
     },
 
     // update (dt) {},
-    mouseStart: function(e){
-      this.dialog.opacity = 0;
+    mouseStart: function(){
+      if(this.evaluationGuest != null){
+        //离开
+        com.data.leaveGuest.push(this.evaluationGuest);
+        this.characters.getComponent('character').leave();
+        this.evaluationGuest = null;
+      }
+      this.dialog.opacity = 0
       this.node.getComponent(cc.Button).interactable = false;
     }
 });

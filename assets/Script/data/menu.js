@@ -3,11 +3,13 @@ module.exports = {
     types:[
       {
         name: "sausage",
-        chinese:"香肠"
+        chinese:"香肠",
+        price:2,
       },
       {
-        name: "potato",
-        chinese: "土豆串"
+        name: "potatopotatopotato",
+        chinese: "土豆串",
+        price:1,
       }
     ],
     getFood(){

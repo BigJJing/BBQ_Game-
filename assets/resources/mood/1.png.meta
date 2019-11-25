@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "27d58301-6765-48c5-89da-99859a6f1089",
+  "uuid": "c85c3f7c-951c-43c9-b3a5-8056db44497f",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,10 +9,10 @@
   "packable": true,
   "platformSettings": {},
   "subMetas": {
-    "组 4 拷贝 2": {
+    "1": {
       "ver": "1.0.4",
-      "uuid": "7343d936-052b-4dd2-9f4f-9b6ef1f0d254",
-      "rawTextureUuid": "27d58301-6765-48c5-89da-99859a6f1089",
+      "uuid": "62c5ebc1-b4e1-46aa-a682-0f2a138d510d",
+      "rawTextureUuid": "c85c3f7c-951c-43c9-b3a5-8056db44497f",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

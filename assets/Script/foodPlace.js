@@ -32,8 +32,18 @@ cc.Class({
         default: null,
         type: cc.Node
       },
+      //顾客
+      guests:{
+        default: null,
+        type: cc.Node
+      },
+      dishes:{
+        default: null,
+        type: cc.Node
+      },
       targetOriginX: 0,
       targetOriginY: 0,
+
     },
 
     onLoad () {
@@ -57,7 +67,6 @@ cc.Class({
       var paprika = this.paprika.getComponent('all');
       var cuminPowder = this.cuminPowder.getComponent('all');
       var oil = this.oil.getComponent('all');
-      console.log(paprika.isSelect,cuminPowder.isSelect,oil.isSelect)
 
     },
 
@@ -85,11 +94,11 @@ cc.Class({
       //没有拿起调料时
       if(!(paprika.isSelect||cuminPowder.isSelect||oil.isSelect)){
         //判断是移动还是翻转食物(没有移动即是翻转)
-        if(target.x == this.targetOriginX && target.y == this.targetOriginY ){
+        if((target.x < this.targetOriginX+5 && target.x > this.targetOriginX-5) && (target.y < this.targetOriginY+5 && target.y > this.targetOriginY-5)){
           //食物翻面
           var ripe = 0;
           var strandsInGrill = com.data.strandsInGrill;
-          for( var i=0; i<strandsInGrill.length; i++){
+          for( let i=0; i<strandsInGrill.length; i++){
             if(strandsInGrill[i].name == target.name){
               if(com.data.strandsInGrill[i].selectedFace == "back"){
                 com.data.strandsInGrill[i].selectedFace = "front"
@@ -112,19 +121,18 @@ cc.Class({
           var targetChild = target.children
           for(let i=1; i<targetChild.length; i++){
             var name = targetChild[i].name;
-            if(ripe < 30){
+            if(ripe < 10){
 
             }
-            else if(ripe>=30 && ripe< 60){
+            else if(ripe>=10 && ripe< 20){
               name+= "_1"
             }
-            else if(ripe>=60 && ripe<90){
+            else if(ripe>=20 && ripe<40){
               name+= "_2"
             }
-            else if(ripe >= 90){
+            else if(ripe >= 40){
               name+= "_3"
             }
-            console.log(name)
             this.changeFoodRipe(name,targetChild[i])
           }
         }
@@ -133,16 +141,22 @@ cc.Class({
           var grillRight = this.grill.width/2 - 50;
           var grillTop =  this.grill.height/2;
           var grillBottom = - this.grill.height/2;
+          //放在烤炉上
           if(target.x >= grillLeft && target.x <= grillRight && target.y <= grillTop && target.y >= grillBottom){
             //检查是否把节点移到了食物上
             var foods = this.node.children;
             var targetLeft = target.x - target.width/2;
             var targetRight = target.x + target.width/2;
-            for(var i = 0; i < foods.length; i++){
+            console.log(targetRight - targetLeft);
+            console.log(foods)
+            for(let i = 0; i < foods.length; i++){
               var foodLeft = foods[i].x - foods[i].width/2;
               var foodRight = foods[i].x + foods[i].width/2;
+              console.log(foodRight-foodLeft)
               if(!(targetRight < foodLeft || targetLeft > foodRight) && foods[i] != target){
                 //位置复原
+                console.log(targetRight,foodLeft)
+                console.log(foods[i])
                 target.x = this.targetOriginX;
                 target.y = this.targetOriginY;
                 target.zIndex --;
@@ -151,12 +165,93 @@ cc.Class({
             }
             //移动到新位置
             target.y = 0;
+            return;
           }
           else{
-            //位置复原
-            target.x = this.targetOriginX;
-            target.y = this.targetOriginY;
+            var guestsPosition = []
+
+            for(let i = 0; i < this.guests.childrenCount;i++){
+              var guestNode = this.guests.children[i];
+              var guestTop = this.guests.x + guestNode.height;
+              var guestBottom = this.guests.x;  //桌子的top
+              var guestLeft = guestNode.x - guestNode.width/2;
+              var guestRight = guestNode.x + guestNode.width/2;
+              guestsPosition.push({
+                top: guestTop,
+                bottom: guestBottom,
+                left: guestLeft,
+                right: guestRight
+              })
+              if(target.x >= guestLeft && target.x <= guestRight && target.y <= guestTop && target.y >= guestBottom){
+                var guest = com.data.guests[com.data.findGuestByName(guestNode.name)];
+                //判斷是否已經點單
+                if(guest.food){
+                  var dish = this.dishes.children[guest.id];
+                  var timerX = setTimeout(function(){
+                    target.parent = dish;
+                    target.zIndex = dish.zIndex + 1;
+                    var action = cc.spawn(cc.scaleTo(0.2,0.2,0.2),cc.moveTo(0.2,0,0)).easing(cc.easeCubicActionOut());
+                    target.runAction(action);
+                    clearTimeout(timerX)
+                  },0)
+                  //找到此串的信息
+                  var strands = com.data.strandsInGrill;
+                  var score = 100;  //食物分数
+                  var isTrueName = false; //判断是否是对的食物原料
+                  var strandName = "";
+                  for(var k = 1; k < target.childrenCount; k++){
+                    strandName += target.children[k].name;
+                  }
+                  if(guest.food.name == strandName){
+                    isTrueName = true;
+                    //根据name找到对应串判断是否已经达到要求
+                    for(let j = 0; j < strands.length; j++){
+                      if(strands[j].name == target.name){
+                        //1.没熟
+                        if(strands[j].front < 20||strands[j].back < 20){
+                          score -= 20;
+                          guest.evaluation = "uncooked"
+                        }
+                        //2.糊了
+                        else if(strands[j].front > 40||strands[j].back > 40){
+                          score -= 20;
+                          guest.evaluation = "thanCooked"
+                        }
+                        //调料放错了
+
+                      }
+                    }
+                  }
+                  if(isTrueName == false){
+                    score -= 40;
+                    guest.evaluation = "falseFood"
+                  }
+                  guest.money = guest.money + score * 0.01 * guest.food.price;
+                  guest.number --;
+                  //取消监听
+                  target.off(cc.Node.EventType.TOUCH_MOVE, this.mouseMove,this);
+                  target.off(cc.Node.EventType.TOUCH_START, this.mouseStart,this);
+                  target.off(cc.Node.EventType.TOUCH_END,this.mouseEnd,this);
+                  target.off(cc.Node.EventType.TOUCH_CANCEL,this.mouseEnd,this);
+                  //判断烤串是否已经全部上完
+                  if(guest.number == 0){
+                    //客人给出评价
+                    var Character = this.guests.getComponent('character');
+                    Character.guestEvaluation(guest)
+                  }
+                  return;
+                }
+                else{
+                  //还没点单提示
+                  console.log("这位顾客还没点单呢");
+                }
+              }
           }
+
+        }
+          //位置复原
+          target.x = this.targetOriginX;
+          target.y = this.targetOriginY;
           target.zIndex --;
         }
       }
@@ -164,10 +259,9 @@ cc.Class({
       else{
         //增加属性
         var strandsInGrill = com.data.strandsInGrill;
-        for(var i = 0; i < strandsInGrill.length; i++){
+        for(let i = 0; i < strandsInGrill.length; i++){
           if(strandsInGrill[i].name == target.name){
             var type = "";
-            console.log(paprika.isSelect,cuminPowder.isSelect,oil.isSelect)
             if(paprika.isSelect){
               strandsInGrill[i].seasoning.push("paprika");
               type = "paprika";
@@ -187,7 +281,7 @@ cc.Class({
     },
 
     //改变食物熟度
-    changeFoodRipe(name,target){
+    changeFoodRipe: function(name,target){
       cc.loader.loadRes(name, cc.SpriteFrame, function (err, spriteFrame) {
           target.getComponent(cc.Sprite).spriteFrame = spriteFrame;
       });
@@ -236,11 +330,10 @@ cc.Class({
             node.width = targetChild.width;
             node.height = targetChild.height;
             //添加动画
-            var action = cc.spawn(cc.fadeTo(2,0),cc.scaleTo(2,0.2,0.2))
+            var action = cc.spawn(cc.fadeTo(2,0),cc.scaleTo(2,0.2,0.2)).easing(cc.easeCubicActionOut())
             node.runAction(action);
             setTimeout(function(){
               node.destroy();
-              console.log(targetChild)
             },2000)
           }
         });

@@ -62,8 +62,10 @@ cc.Class({
         this.targetOriginX = target.x;
         this.targetOriginY = target.y;
         this.isLight = true;
+        /*显示可防止位置
         var anim = this.grillPosition.getComponent(cc.Animation);
         anim.play();
+        */
         //变大,旋转
         var action = cc.spawn(cc.scaleTo(0.2,0.8,0.8),cc.rotateBy(0.2,-90)).easing(cc.easeCubicActionOut());
         target.runAction(action);
@@ -104,9 +106,11 @@ cc.Class({
         return;
       }
       this.isLight = false;
+      /* 显示可防止位置
       var anim = this.grillPosition.getComponent(cc.Animation);
       anim.stop();
       this.grillPosition.opacity = 0;
+      */
       //判断是否放在烤炉上，如果没有则复原
       //x:-744 ~194  y: -200~100
       var grillLeft = -744;
@@ -131,9 +135,14 @@ cc.Class({
         target.parent = this.foodPlace;
         //判断防止食物的位置在哪里 x=-300 -200 -100 0 100 200 300 400
         target.y = 0;
-        target.x =target.x + distance - target.width/2;
-        var strandsInGrill = com.data.strandsInGrill
-        target.name = "strand"+strandsInGrill.length;
+        target.x =target.x + distance;
+        //随机生成是个数
+        var randomNum = ""
+        for(let j = 0; j < 10; j++){
+          randomNum += Math.floor(Math.random() * 10)
+        }
+        //唯一标识
+        target.name = "strand" + randomNum;
 
         //取消监听
         target.off(cc.Node.EventType.TOUCH_MOVE, this.mouseMove, this)
@@ -158,7 +167,7 @@ cc.Class({
     doRecover: function(target){
       var x = -1 * target.x + this.targetOriginX;
       var y = -1 * target.y + this.targetOriginY + this.targetBeforeYLength*5;
-      var action = cc.spawn(cc.scaleTo(0.2,0.4,0.4), cc.rotateBy(0.2,90), cc.moveBy(0.2,x,y))
+      var action = cc.spawn(cc.scaleTo(0.2,0.4,0.4), cc.rotateBy(0.2,90), cc.moveBy(0.2,x,y)).easing(cc.easeCubicActionOut())
       target.runAction(action)
       this.changeFoodOrder(target);
       this.targetBeforeYLength = 0;

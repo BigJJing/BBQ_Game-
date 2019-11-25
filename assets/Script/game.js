@@ -23,12 +23,19 @@ cc.Class({
         guest:{
           default: null,
           type: cc.Node
+        },
+        money:{
+          default: null,
+          type: cc.Label
         }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+      //money
+      this.money.string = com.data.money.toFixed(2);
+      //篮子里的食物
       var basket = com.data.basket;
       if(basket !== null && basket.childrenCount !== 0){
         for(var i=0;i<basket.childrenCount;i++){
@@ -36,6 +43,7 @@ cc.Class({
           node.parent = this.basket;
         }
       }
+      //烤架上的食物
       var foodPlace = com.data.foodPlace;
       if(foodPlace !== null && foodPlace.childrenCount !== 0){
         for(var i=0;i<foodPlace.childrenCount;i++){

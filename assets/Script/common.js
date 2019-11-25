@@ -3,9 +3,19 @@
 module.exports = {
 
   data: {
+    money: 10,
     strand: [],   //当前串
     strands:[],   //所有串 [{type:"typeName","length":Number}]
-    strandsInGrill:[],  //在烤的串 [{name:"name",typeName:"typeName",front:0-2,back:0-2,seasoning:["oil",...]}]
+    //在烤的串
+    /* [{
+          name:"name",  //对应每个target.name, 唯一标识
+          typeName:"typeName",
+          front:0-2,    //20~40：熟了
+          back:0-2,
+          seasoning:["oil",...]
+        }]
+    */
+    strandsInGrill:[],
     presentSize:0,  //当前串的大小的
     maxSize:6, //每串能装的大小
     //所有食物的占位大小
@@ -29,22 +39,27 @@ module.exports = {
     //当前的客人信息：基本信息，点的食物，
     /*
       guests{
-        id:0  , //id为序号 0,1,2,3
+        id:0  , //id座位号 ：0,1,2,3
         guest:{
           name:"",
           type:"kind",
           appearance:""
         },
-        food:"",
+
+        food:{},     // {  name: "potatopotatopotato",chinese: "土豆串",price:1,}
         number:1,
-        mood:120  //120秒就离开
-    }
+        mood:120,  //120秒就离开
+        money:0    //支付的费用
+        evaluation:type   //评价：type:选择最严重的(食物错了："falseFood",没熟："uncooked"，烤糊了:"thanCooked")
+      }
     */
     guests:[
         {},{},{},{}
     ],
     guestsNum:0,
     leaveGuest:[],
+    //客人出现计时是否关闭
+    isStopGuestTimer:false,
     //保存对话
     /*
     {
@@ -66,6 +81,7 @@ module.exports = {
       that.timer=setInterval(function(){
         //对食物的熟度计时
         for(var i=0;i<that.strandsInGrill.length;i++){
+
           if(that.strandsInGrill[i].selectedFace == "back"){
             that.strandsInGrill[i].back += 5
           }
@@ -79,28 +95,30 @@ module.exports = {
         }
         */
         //客人的出现计时
-        if(that.timeShow == that.settings.timeForGuest){
-          that.timeShow = -5;
-          if(that.guestsNum < 4){
-            that.guestsNum ++;
+        if(!that.isStopGuestTimer){
+          if(that.timeShow == that.settings.timeForGuest){
+            that.timeShow = -5;
+            if(that.guestsNum < 4){
+              that.guestsNum ++;
+            }
           }
-        }
-        that.timeShow += 5;
-        //客人的心情计时
-        for(var j = 0; j < that.guests.length; j++){
-          var str = JSON.stringify(that.guests[j]);
-          if(str !== "{}"){
-            console.log(that.guests[j].mood)
-            if(that.guests[j].mood <= 0){
-              //离开
-              that.leaveGuest.push(that.guests[j])
-            }
-            else{
-              that.guests[j].mood -= 5;
-            }
+          that.timeShow += 5;
+          //客人的心情计时
+          for(var j = 0; j < that.guests.length; j++){
+            var str = JSON.stringify(that.guests[j]);
+            if(str !== "{}"){
+              if(that.guests[j].mood <= 0){
+                //离开
+                that.leaveGuest.push(that.guests[j])
+              }
+              else{
+                that.guests[j].mood -= 5;
+              }
 
+            }
           }
         }
+
       },5000)
     },
     clearTime(){
@@ -108,7 +126,6 @@ module.exports = {
     },
     //获取客人的随机位置并返回
     getGuestPosition(person){
-      console.log(person)
       var arr = [];
       for(var i = 0; i < this.guests.length; i++){
         var str = JSON.stringify(this.guests[i]);
@@ -116,13 +133,20 @@ module.exports = {
           arr.push(i)
         }
       }
-      var num = Math.floor(Math.random() * arr.length);
-      this.guests[arr[num]].guest = person;
-      this.guests[arr[num]].mood = 30;
-      return arr[num]
+      if(arr.length !== 0){
+        var num = Math.floor(Math.random() * arr.length);
+        this.guests[arr[num]].id = arr[num];
+        this.guests[arr[num]].guest = person;
+        this.guests[arr[num]].mood = 150;
+        this.guests[arr[num]].money = 0;
+        this.guests[arr[num]].evaluation = "tasteGood";
+        return arr[num]
+      }
+      else{
+        return false
+      }
     },
     findGuestByName(name){
-      console.log(name)
       for(var i = 0; i < this.guests.length; i++){
         if(JSON.stringify(this.guests[i])!= "{}" && this.guests[i].guest.name == name){
             return i;

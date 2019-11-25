@@ -127,7 +127,7 @@ cc.Class({
         data.strand=[];
         data.presentSize=0;
         //变小且移动位置
-        var action = cc.spawn(cc.scaleTo(0.2,0.4,0.4), cc.rotateBy(0.2,90), cc.moveBy(0.2,-20,y))
+        var action = cc.spawn(cc.scaleTo(0.2,0.4,0.4), cc.rotateBy(0.2,90), cc.moveBy(0.2,-20,y)).easing(cc.easeCubicActionOut())
         this.presentStrand.runAction(action)
         //将此节点添加到basket节点下
         this.presentStrand.parent = this.basket;
@@ -147,7 +147,7 @@ cc.Class({
 
       //食物如果放在了垃圾桶里
       else if(this.presentStrand.x >= trashLeft && this.presentStrand.x < trashRight && this.presentStrand.y >= trashBottom && this.presentStrand.y < trashTop){
-        var action = cc.spawn(cc.scaleTo(0.2,0,0),cc.moveBy(0.2,0,0))
+        var action = cc.spawn(cc.scaleTo(0.2,0,0),cc.moveBy(0.2,0,0)).easing(cc.easeCubicActionOut())
         var anim = this.trash.getComponent(cc.Animation);
         this.presentStrand.runAction(action)
         this.isTrashOpen = false;

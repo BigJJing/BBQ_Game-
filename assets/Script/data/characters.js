@@ -29,13 +29,11 @@ module.exports = {
     ],
     //随机派出人物
     show(guests){
-      console.log(guests)
       var nameArr = [];
       var characterArr = [];
       for(let i = 0; i < guests.length; i++){
         var str = JSON.stringify(guests[i])
         if(str != "{}"){
-          console.log(str)
           nameArr.push(guests[i].guest.name)
         }
       }
@@ -45,10 +43,7 @@ module.exports = {
           characterArr.push(this.character[i])
         }
       }
-      console.log(nameArr)
       var num = Math.floor(Math.random()*characterArr.length);
-      console.log(characterArr)
-      console.log(num)
       return characterArr[num]
     },
     findByName(name){
