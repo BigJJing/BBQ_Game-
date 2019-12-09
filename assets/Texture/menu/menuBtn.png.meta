@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "3e3da680-7a62-41b2-b431-f327d0929173",
+  "uuid": "8c4617a3-8161-4b44-95aa-b1d0d4496d2a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -9,10 +9,10 @@
   "packable": true,
   "platformSettings": {},
   "subMetas": {
-    "sun": {
+    "menuBtn": {
       "ver": "1.0.4",
-      "uuid": "a9e3e02f-afb4-4687-afcf-79b6046b5f76",
-      "rawTextureUuid": "3e3da680-7a62-41b2-b431-f327d0929173",
+      "uuid": "a2432763-c0c8-44de-9a61-589ec7ba48e0",
+      "rawTextureUuid": "8c4617a3-8161-4b44-95aa-b1d0d4496d2a",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -20,10 +20,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 139,
-      "height": 54,
-      "rawWidth": 139,
-      "rawHeight": 54,
+      "width": 159,
+      "height": 58,
+      "rawWidth": 159,
+      "rawHeight": 58,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

@@ -44,7 +44,7 @@ cc.Class({
         //游戏开始2秒后人物出场
         com.data.guestsNum = 1;
         var component = this;
-        //cocos自带计时器：绑定组件，只执行一次，2后执行
+        //cocos自带计时器：绑定组件，只执行一次，2s后执行
         component.scheduleOnce(function() {
            // 这里的 this 指向 component
            this.showGuest();
@@ -73,50 +73,6 @@ cc.Class({
         //客人心情变化
         this.updateMood();
       }
-
-
-      //控制客人出现
-      var that = this;
-      that.timerLeave = setInterval(function(){
-        //客人的心情计时
-        for(var j = 0; j < com.data.guests.length; j++){
-            var str = JSON.stringify(com.data.guests[j]);
-            if(str !== "{}"){
-              var node;
-              for(let i = 0; i < that.node.childrenCount; i++){
-                if(that.node.children[i].name == com.data.guests[j].guest.name){
-                  node = that.node.children[i]
-                }
-              }
-              var guestMood = com.data.guests[j].mood;
-              if(guestMood <= 0 && node){
-                //离开
-                com.data.leaveGuest.push(com.data.guests[j]);
-                that.leave();
-              }
-              else if(node){
-                var mood
-                for(let i = 0; i < node.childrenCount; i++){
-                  //if(node.children[i].name != "talk"){
-                  if(node.children[i].name != "talk"){
-                    mood = node.children[i]
-                  }
-                }
-                that.changeMood(mood,guestMood)
-                com.data.guests[j].mood -= 2;
-              }
-
-            }
-          }
-        //心情为0时离开
-        //that.leave();
-      },2000)
-      that.timerShow = setInterval(function(){
-        if(com.data.guestsNum < 4){
-          that.showGuest();
-          com.data.guestsNum ++;
-        }
-      },com.data.settings.timeForGuest*1000)
     },
 
     start () {
@@ -246,8 +202,41 @@ cc.Class({
       var dialogBtn = this.dialogBtn.getComponent('dialogBtn')
       dialogBtn.evaluationGuest = guest
     },
+    findLeaveGuest: function(){
+      for(var j = 0; j < com.data.guests.length; j++){
+          var str = JSON.stringify(com.data.guests[j]);
+          if(str !== "{}"){
+            var node;
+            for(let i = 0; i < this.node.childrenCount; i++){
+              if(this.node.children[i].name == com.data.guests[j].guest.name){
+                node = this.node.children[i]
+              }
+            }
+            var guestMood = com.data.guests[j].mood;
+            if(guestMood <= 0 && node){
+              //离开
+              com.data.leaveGuest.push(com.data.guests[j]);
+              this.leave();
+            }
+            else if(node){
+              var mood
+              for(let i = 0; i < node.childrenCount; i++){
+                //if(node.children[i].name != "talk"){
+                if(node.children[i].name != "talk"){
+                  mood = node.children[i]
+                }
+              }
+              this.changeMood(mood,guestMood)
+              com.data.guests[j].mood -= 5;
+            }
 
+          }
+        }
+    },
     leave: function(){
+      console.log("leave")
+      console.log(com.data.guests)
+      console.log(com.data.leaveGuest.length)
       while(com.data.leaveGuest.length != 0){
         var leaveOne = com.data.leaveGuest[0];
         var allGuests = this.node.children;
@@ -260,12 +249,12 @@ cc.Class({
               clearTimeout(timer)
             },500)
             com.data.guestsNum --;
-            com.data.leaveGuest.splice(0,1);
           }
         }
         var index = com.data.findGuestByName(leaveOne.guest.name);
+        console.log(leaveOne.guest.name)
         if(index === false){
-          console.err("error: can't find leave guest named" + leaveOne.guest.name)
+          console.log("error: can't find leave guest named" + leaveOne.guest.name)
         }
         else{
           //删除聊天记录
@@ -301,6 +290,9 @@ cc.Class({
           com.data.guests[index] = {};
 
         }
+        var xxx=com.data.leaveGuest.splice(0,1);
+        console.log(xxx)
+        console.log(com.data.leaveGuest.length)
       }
     },
 

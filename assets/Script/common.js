@@ -3,6 +3,8 @@
 module.exports = {
 
   data: {
+    totalTimeForDay:600, //10min:10*60s
+    timeForDay:0,
     money: 10,
     strand: [],   //当前串
     strands:[],   //所有串 [{type:"typeName","length":Number}]
@@ -74,11 +76,13 @@ module.exports = {
     //一个时间游戏计时器：随机在某个时间点来客人
     settings:{
       timeForGame:10, //min
-      timeForGuest: 10, //每n秒（5的倍数）内出现一个人，用来确定游戏的难度
+      timeForGuest: 100, //每n秒（5的倍数）内出现一个人，用来确定游戏的难度
     },
+    /*
     calcTime(){
       var that = this;
       that.timer=setInterval(function(){
+        timeForDay += 5;
         //对食物的熟度计时
         for(var i=0;i<that.strandsInGrill.length;i++){
 
@@ -89,11 +93,6 @@ module.exports = {
             that.strandsInGrill[i].front += 5
           }
         }
-        /*
-        if(that.guestsNum==0){
-          that.guestsNum = 1;
-        }
-        */
         //客人的出现计时
         if(!that.isStopGuestTimer){
           if(that.timeShow == that.settings.timeForGuest){
@@ -121,8 +120,38 @@ module.exports = {
 
       },5000)
     },
+    */
     clearTime(){
       clearInterval(this.timer)
+    },
+    changeAllInCommon(){
+      this.timeForDay += 5;
+      this.timeShow += 5;
+      //对食物的熟度计时
+      for(var i=0;i<this.strandsInGrill.length;i++){
+
+        if(this.strandsInGrill[i].selectedFace == "back"){
+          this.strandsInGrill[i].back += 5
+        }
+        else{
+          this.strandsInGrill[i].front += 5
+        }
+      }
+    },
+    changeMood(){
+      for(var j = 0; j < this.guests.length; j++){
+        var str = JSON.stringify(this.guests[j]);
+        if(str !== "{}"){
+          if(this.guests[j].mood <= 0){
+            //离开
+            this.leaveGuest.push(this.guests[j])
+          }
+          else{
+            this.guests[j].mood -= 5;
+          }
+
+        }
+      }
     },
     //获取客人的随机位置并返回
     getGuestPosition(person){
@@ -147,8 +176,10 @@ module.exports = {
       }
     },
     findGuestByName(name){
+      console.log(this.guests)
       for(var i = 0; i < this.guests.length; i++){
-        if(JSON.stringify(this.guests[i])!= "{}" && this.guests[i].guest.name == name){
+        if(JSON.stringify(this.guests[i]) != "{}" && this.guests[i].guest.name == name){
+          console.log(this.guests[i])
             return i;
         }
       }
@@ -160,7 +191,8 @@ module.exports = {
         appearance: appearance,
         content:content
       })
-    }
+    },
+
 
   },
 

@@ -27,12 +27,49 @@ cc.Class({
         money:{
           default: null,
           type: cc.Label
-        }
+        },
+        sun:{
+          default: null,
+          type: cc.Sprite
+        },
+        timeChange:5000
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+      //计时
+        com.data.timer = setInterval(()=>{
+          //食物，天数的变化
+          var nowSence = cc.director.getScene();
+          com.data.changeAllInCommon();
+          if(nowSence.name == "SenceCook"){
+            var guestScript = this.guest.getComponent('character');
+            //客人出现
+            if(com.data.timeShow == com.data.settings.timeForGuest){
+              com.data.timeShow = 0;
+              if(com.data.guestsNum < 4){
+                guestScript.showGuest();;
+                com.data.guestsNum ++;
+              }
+            }
+            //客人离开
+            guestScript.findLeaveGuest();
+
+          }
+          else{
+            //客人出现
+            if(com.data.timeShow == com.data.settings.timeForGuest){
+              com.data.timeShow = 0;
+              if(com.data.guestsNum < 4){
+                com.data.guestsNum ++;
+              }
+            }
+            com.data.changeMood();
+          }
+
+        },this.timeChange)
+
       //money
       this.money.string = com.data.money.toFixed(2);
       //篮子里的食物
@@ -64,6 +101,7 @@ cc.Class({
 
     //切换场景
     changeSence: function(e){
+      clearInterval(com.data.timer)
       var nowSence = cc.director.getScene();
       if(e.keyCode == 65 || e.keyCode == 68){
         com.data.basket = cc.instantiate(this.basket);
@@ -74,7 +112,6 @@ cc.Class({
         }
         else{
           var presentStrand = cc.find("Canvas").getChildByName('Main Camera').getChildByName('presentStrand');
-          console.log(presentStrand)
           com.data.presentStrand = cc.instantiate(presentStrand);
           cc.director.loadScene("SenceCook")
 
@@ -89,7 +126,6 @@ cc.Class({
       var topX = -190;
       var topY = 200;
       const MAX_CONTENT_LENGTH = 18;
-      console.log(topX,topY)
       var content = "";
       for(var i = 0; i < dialogs.length; i++){
         content += dialogs[i].appearance;
@@ -97,10 +133,8 @@ cc.Class({
         var diaContent = dialogs[i].content;
         if(diaContent.length > MAX_CONTENT_LENGTH){
           var diaLen = Math.ceil(diaContent.length/MAX_CONTENT_LENGTH)
-          console.log(diaLen)
           for(var j = 0; j < diaLen; j++){
             var str = diaContent.slice(j*MAX_CONTENT_LENGTH,(j+1)*MAX_CONTENT_LENGTH)
-            console.log(str)
             content += str;
             content += "\n"
           }
@@ -123,5 +157,25 @@ cc.Class({
       cancelBtn.off(cc.Node.EventType.TOUCH_START, this.closeMenu, this)
     },
 
+    //显示太阳
+    showSun:function(){
+      //8个区间
+      var addition = this.totalTimeForDay/16;
+      var num = Math.floor(com.data.timeForDay / addition)
+      var imageUrl = "sun/"+ num;
+      return imageUrl;
+    },
 
+    _throttle: function(fn){
+      let isRun = true;
+      return function(){
+        if(isRun == false){
+          return;
+        }
+        isRun = true;
+        setTimeout(()=>{
+          fn.apply(this,arguments)
+        },this.timeChange)
+      }
+    }
 });
