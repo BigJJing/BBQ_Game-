@@ -3,6 +3,8 @@
 module.exports = {
 
   data: {
+    timeForGame:30,   //本场游戏时间:10min = 600s
+    timeForGameDisplay:"00:00",
     totalTimeForDay:600, //10min:10*60s
     timeForDay:0,
     money: 10,
@@ -23,7 +25,8 @@ module.exports = {
     //所有食物的占位大小
     foods:{
       sausage: 6,
-      potato: 2
+      potato: 2,
+      mutton: 6,
     },
     maxBasketSize: 3, //篮子中能放食物的最多种类
     //保存篮子node对象
@@ -78,49 +81,6 @@ module.exports = {
       timeForGame:10, //min
       timeForGuest: 100, //每n秒（5的倍数）内出现一个人，用来确定游戏的难度
     },
-    /*
-    calcTime(){
-      var that = this;
-      that.timer=setInterval(function(){
-        timeForDay += 5;
-        //对食物的熟度计时
-        for(var i=0;i<that.strandsInGrill.length;i++){
-
-          if(that.strandsInGrill[i].selectedFace == "back"){
-            that.strandsInGrill[i].back += 5
-          }
-          else{
-            that.strandsInGrill[i].front += 5
-          }
-        }
-        //客人的出现计时
-        if(!that.isStopGuestTimer){
-          if(that.timeShow == that.settings.timeForGuest){
-            that.timeShow = -5;
-            if(that.guestsNum < 4){
-              that.guestsNum ++;
-            }
-          }
-          that.timeShow += 5;
-          //客人的心情计时
-          for(var j = 0; j < that.guests.length; j++){
-            var str = JSON.stringify(that.guests[j]);
-            if(str !== "{}"){
-              if(that.guests[j].mood <= 0){
-                //离开
-                that.leaveGuest.push(that.guests[j])
-              }
-              else{
-                that.guests[j].mood -= 5;
-              }
-
-            }
-          }
-        }
-
-      },5000)
-    },
-    */
     clearTime(){
       clearInterval(this.timer)
     },
@@ -176,10 +136,8 @@ module.exports = {
       }
     },
     findGuestByName(name){
-      console.log(this.guests)
       for(var i = 0; i < this.guests.length; i++){
         if(JSON.stringify(this.guests[i]) != "{}" && this.guests[i].guest.name == name){
-          console.log(this.guests[i])
             return i;
         }
       }

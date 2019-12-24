@@ -177,6 +177,7 @@ cc.Class({
               if(target.x >= guestLeft && target.x <= guestRight && target.y <= guestTop && target.y >= guestBottom){
                 var guest = com.data.guests[com.data.findGuestByName(guestNode.name)];
                 //判斷是否已經點單
+                console.log(guest)
                 if(guest.food){
                   var dish = this.dishes.children[guest.id];
                   var timerX = setTimeout(function(){

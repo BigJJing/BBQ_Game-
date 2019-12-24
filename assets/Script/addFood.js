@@ -91,10 +91,10 @@ cc.Class({
         var canvas = cc.view.getFrameSize();    //获取总画布宽高
         //计算中心的坐标x 和 变化我坐标y
 
-        var x = -that.node.x;
+        var x = - that.node.x;
         //var y = (that.presentStrand.y - that.presentStrand.height/4)/6 * (7-com.data.foods[imageName]);\
         if(com.data.foods[imageName]==6){
-          var y = -220
+          var y = -200
         }
         else{
           var y =100 - that.node.y - singleFood.height/2 - (6- com.data.presentSize - com.data.foods[imageName])*35 ;

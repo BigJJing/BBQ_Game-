@@ -1,5 +1,5 @@
 var characters = require('data/characters')
-var menu = require('data/menu')
+var foodMenu = require('data/menu')
 var dialog = require('data/dialog')
 var com = require('common');
 cc.Class({
@@ -7,8 +7,6 @@ cc.Class({
 
     properties: {
       position:[],  //客人位置
-      timerShow:null,
-      timerLeave:null,
       dishes:{
         default:null,
         type:cc.Node
@@ -80,8 +78,6 @@ cc.Class({
     },
 
     onDestroy(){
-      clearInterval(this.timerShow)
-      clearInterval(this.timerLeave)
       com.data.isStopGuestTimer = false;
     },
     // update (dt) {},
@@ -158,7 +154,8 @@ cc.Class({
       var node = e.target;
       var name = node.name;
       var guest = characters.data.findByName(name);
-      var food = menu.data.getFood();
+      console.log(dialog)
+      var food = foodMenu.data.getFood();
       var talk = dialog.data.getGreeting(guest.type);
       var number = dialog.data.getNumber(guest.type);
 
@@ -288,11 +285,15 @@ cc.Class({
           },100)
 
           com.data.guests[index] = {};
-
+          com.data.leaveGuest.splice(0,1);
+          console.log(com.data.guestsNum);
+          setTimeout(()=>{
+            if(com.data.guestsNum == 0 && com.data.timeForGame > 0){
+              this.showGuest();
+              com.data.guestsNum++;
+            }
+          },500)
         }
-        var xxx=com.data.leaveGuest.splice(0,1);
-        console.log(xxx)
-        console.log(com.data.leaveGuest.length)
       }
     },
 

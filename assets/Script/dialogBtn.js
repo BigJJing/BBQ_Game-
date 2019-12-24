@@ -21,7 +21,7 @@ cc.Class({
           default: null,
           type: cc.Node
         },
-        evaluationGuest:null
+        evaluationGuest:null,
     },
 
     // LIFE-CYCLE CALLBACKS:

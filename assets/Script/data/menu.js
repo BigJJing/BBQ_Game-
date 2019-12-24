@@ -10,6 +10,11 @@ module.exports = {
         name: "potatopotatopotato",
         chinese: "土豆串",
         price:1,
+      },
+      {
+        name: "mutton",
+        chinese: "羊肉串",
+        price:3,
       }
     ],
     getFood(){
