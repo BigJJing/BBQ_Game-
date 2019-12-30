@@ -96,6 +96,11 @@ cc.Class({
         com.data.timeForGameDisplay = this.sun.string;
         console.log(com.data.timeForGame)
         console.log("num: "+ com.data.guestsNum)
+        console.log(this.sun.node)
+        if(com.data.timeForGame <= 0){
+
+          this.sun.node.color = new cc.Color().fromHEX('#FF0000');
+        }
         if(com.data.timeForGame <= 0 && com.data.guestsNum == 0){
             console.log("Game Over");
             com.data.clearTime()
@@ -208,6 +213,7 @@ cc.Class({
       if(e.target.name == 'return'){
         this.doInterval();
         parent.destroy();
+        console.log("destory")
       }
       else if(e.target.name == 'settings'){
         console.log(2)

@@ -53,7 +53,18 @@ cc.Class({
     //进入第n天
     enter: function(){
       var userData = JSON.parse(cc.sys.localStorage.getItem('userData'))
-      console.log(userData)
+
+      cc.director.loadScene("SenceCook")
+      /*
+      var that = this;
+      cc.director.preloadScene("SenceCook", function () {
+        that.node.runAction(cc.fadeOut(0.5));
+        setTimeout(function(){
+          cc.director.loadScene("SenceCook")
+        },500)
+      })
+      */
+
     },
     //取名字
     doNaming: function(e){
