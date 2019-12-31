@@ -53,7 +53,9 @@ cc.Class({
     onLoad () {
       //显示时间
       this.sun.string = com.data.timeForGameDisplay;
-
+      if(com.data.timeForGame <= 0){
+        this.sun.node.color = new cc.Color().fromHEX('#FF0000');
+      }
 
       //money
       this.money.string = com.data.money.toFixed(2);
@@ -98,12 +100,11 @@ cc.Class({
         console.log("num: "+ com.data.guestsNum)
         console.log(this.sun.node)
         if(com.data.timeForGame <= 0){
-
           this.sun.node.color = new cc.Color().fromHEX('#FF0000');
         }
         if(com.data.timeForGame <= 0 && com.data.guestsNum == 0){
-            console.log("Game Over");
-            com.data.clearTime()
+
+
         }
         //食物变化
         var nowSence = cc.director.getScene();
@@ -225,6 +226,7 @@ cc.Class({
         for(let i = 1; i < children.length; i++){
           children[i].on(cc.Node.EventType.TOUCH_START,function(e){
             if(e.target.name == "true"){
+              com.data.restoreData()
               cc.director.loadScene("SenceEnter")
             }
             else if(e.target.name == "false"){

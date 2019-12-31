@@ -1,13 +1,4 @@
-// Learn cc.Class:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
+var com = require('common');
 cc.Class({
     extends: cc.Component,
 
@@ -53,7 +44,7 @@ cc.Class({
     //进入第n天
     enter: function(){
       var userData = JSON.parse(cc.sys.localStorage.getItem('userData'))
-
+      com.data.money = userData.money;
       cc.director.loadScene("SenceCook")
       /*
       var that = this;

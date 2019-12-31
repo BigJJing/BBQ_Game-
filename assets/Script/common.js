@@ -3,11 +3,14 @@
 module.exports = {
 
   data: {
-    timeForGame:30,   //本场游戏时间:10min = 600s
+    //本场游戏时间:10min = 600s
+    timeForGame:30,
+    //显示的时间
     timeForGameDisplay:"00:00",
-    totalTimeForDay:600, //10min:10*60s
-    timeForDay:0,
-    money: 10,
+    //拥有的钱
+    money: 0,
+    //好评数
+    praiseNum:0,
     strand: [],   //当前串
     strands:[],   //所有串 [{type:"typeName","length":Number}]
     //在烤的串
@@ -19,16 +22,11 @@ module.exports = {
           seasoning:["oil",...]
         }]
     */
+    strands:[],
+    //在烤炉上的串
     strandsInGrill:[],
-    presentSize:0,  //当前串的大小的
-    maxSize:6, //每串能装的大小
-    //所有食物的占位大小
-    foods:{
-      sausage: 6,
-      potato: 2,
-      mutton: 6,
-    },
-    maxBasketSize: 3, //篮子中能放食物的最多种类
+    //当前串(在处理板上)的大小的
+    presentSize:0,
     //保存篮子node对象
     basket: null,
     //保存烤架上的食物
@@ -55,7 +53,7 @@ module.exports = {
         number:1,
         mood:120,  //120秒就离开
         money:0    //支付的费用
-        evaluation:type   //评价：type:选择最严重的(食物错了："falseFood",没熟："uncooked"，烤糊了:"thanCooked")
+        evaluation:type   //评价：type:选择最严重的(完美："tasteGood",食物错了："falseFood",没熟："uncooked"，烤糊了:"thanCooked")
       }
     */
     guests:[
@@ -72,9 +70,18 @@ module.exports = {
       content:""
     }
     */
-    dialogs:[
-
-    ],
+    dialogs:[],
+    /*
+    * 固定设置
+    */
+    maxSize:6, //每串能装的大小
+    //所有食物的占位大小
+    foods:{
+      sausage: 6,
+      potato: 2,
+      mutton: 6,
+    },
+    maxBasketSize: 3, //篮子中能放食物的最多种类
     //游戏设置
     //一个时间游戏计时器：随机在某个时间点来客人
     settings:{
@@ -85,7 +92,6 @@ module.exports = {
       clearInterval(this.timer)
     },
     changeAllInCommon(){
-      this.timeForDay += 5;
       this.timeShow += 5;
       //对食物的熟度计时
       for(var i=0;i<this.strandsInGrill.length;i++){
@@ -150,6 +156,26 @@ module.exports = {
         content:content
       })
     },
+    //还原数据
+    restoreData(){
+      this.timeForGameDisplay = "00:00";
+      this.timeForGame = 30;
+      this.praiseNum = 0;
+      this.strand = [];
+      this.strands = [];
+      this.strands = [];
+      this.strandsInGrill = [];
+      this.presentSize = 0;
+      this.foodPlace = null;
+      this.presentStrand = null;
+      this.guest = null;
+      this.timer = null;
+      this.timeShow = 0;
+      this.guests = [{},{},{},{}];
+      this.guestsNum = 0;
+      this.isStopGuestTimer = false;
+      this.dialogs = [];
+    }
 
 
   },

@@ -26,6 +26,10 @@ cc.Class({
       money: {
         default: null,
         type: cc.Label
+      },
+      account:{
+        default: null,
+        type: cc.Prefab
       }
     },
 
@@ -189,6 +193,9 @@ cc.Class({
 
     //客人评价
     guestEvaluation: function(guest) {
+      if(guest.evaluation == "tasteGood"){
+        com.data.praiseNum ++;
+      }
       var guestTalk = dialog.data.getEvaluation(guest.guest.type, guest.evaluation);
       var label = this.order.getComponent(cc.Label);
       label.string = guestTalk;
@@ -280,6 +287,7 @@ cc.Class({
             else{
               clearInterval(moneyTimer);
               com.data.money = parseFloat(endMoney);
+              console.log(com.data.money)
               that.money.string = parseFloat(endMoney).toFixed(2) + ""
             }
           },100)
@@ -287,12 +295,55 @@ cc.Class({
           com.data.guests[index] = {};
           com.data.leaveGuest.splice(0,1);
           console.log(com.data.guestsNum);
-          setTimeout(()=>{
-            if(com.data.guestsNum == 0 && com.data.timeForGame > 0){
+          if(com.data.guestsNum == 0 && com.data.timeForGame > 0){
+            setTimeout(()=>{
               this.showGuest();
               com.data.guestsNum++;
-            }
-          },500)
+            },500)
+          }
+          else{
+            setTimeout(()=>{
+              //游戏结束 ： 显示今天的营业详情
+              console.log("Game Over");
+              com.data.clearTime();
+              var account = cc.instantiate(this.account);
+              account.parent = this.node.parent.parent;
+              var children = account.children;
+              console.log(children);
+              var userData = JSON.parse(cc.sys.localStorage.getItem('userData'));
+              console.log(userData);
+              //天数
+              var dayNum = children[1].children[1].getComponent(cc.Label);
+              console.log(dayNum)
+              dayNum.string = userData.day;
+              //销售额
+              var total = children[3].getComponent(cc.Label);
+              total.string = (com.data.money - userData.money).toFixed(2);
+              //利润
+              var profit = children[5].getComponent(cc.Label);
+              var profitMoney = (com.data.money - userData.money - 10).toFixed(2);
+              profit.string = profitMoney;
+              if(profitMoney >= 0){
+                children[5].color = new cc.Color().fromHEX('#A46556');
+              }
+              else{
+                children[5].color = new cc.Color().fromHEX('#7EA456');
+              }
+              //好评数
+              var praise = children[6].getComponent(cc.Label);
+              praise.string = com.data.praiseNum;
+              //保存游戏数据
+              userData.day++;
+              userData.money = com.data.money;
+              cc.sys.localStorage.setItem('userData',JSON.stringify(userData));
+              children[7].on('click',function(){
+                //清空所有的数据
+                com.data.restoreData()
+                //回退到第几天页面
+                cc.director.loadScene("SenceEnter")
+              })
+            },1000)
+          }
         }
       }
     },
