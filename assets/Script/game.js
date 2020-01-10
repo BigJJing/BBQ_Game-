@@ -17,13 +17,20 @@ cc.Class({
           type:cc.Node
         },
         //预制资源
+        //右上角菜单
         menu: {
           default: null,
           type: cc.Prefab
         },
-        conformBack:{
+        //确认退出框
+        confirmBack:{
           default: null,
           type: cc.Prefab
+        },
+        //设置音乐框
+        setting:{
+          default:null,
+          type:cc.Prefab
         },
         menuBtn:{
           default: null,
@@ -51,6 +58,15 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+      //音效
+      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+      var nowSence = cc.director.getScene();
+      if(nowSence.name == "SenceCook"){
+        this.AudioPlayer.playBarbecueSound();
+      }
+      else{
+        this.AudioPlayer.stopBarbecueSound();
+      }
       //显示时间
       this.sun.string = com.data.timeForGameDisplay;
       if(com.data.timeForGame <= 0){
@@ -138,7 +154,6 @@ cc.Class({
     },
     //切换场景
     changeSence: function(e){
-      console.log(3333)
       com.data.clearTime();
       var nowSence = cc.director.getScene();
       if(e.keyCode == 65 || e.keyCode == 68){
@@ -158,6 +173,8 @@ cc.Class({
     },
     //打开对话记录菜单
     openDialog: function(e){
+      //音效
+      this.AudioPlayer.playPropClick();
       //更新里面的内容
       var dialogs = com.data.dialogs;
       var menu = this.dialogMenu.children[1].children[0];
@@ -198,9 +215,12 @@ cc.Class({
 
     //打开游戏菜单页面
     openMenu: function(e){
+      //音效
+      this.AudioPlayer.stopBarbecueSound();
+      this.AudioPlayer.playPropClick();
+      //显示菜单
       var menu = cc.instantiate(this.menu);
       this.node.parent.addChild(menu);
-      console.log(2222)
       com.data.clearTime();
       var btns = menu.children[0].children;
       for(var i = 0; i < btns.length; i++){
@@ -210,28 +230,51 @@ cc.Class({
     },
 
     selectMenuBtn:function(e){
+      //音效
+      this.AudioPlayer.playGeneralClick();
       var parent = e.target.parent.parent;
       if(e.target.name == 'return'){
-        this.doInterval();
-        parent.destroy();
-        console.log("destory")
+        this.closeMenu(parent)
       }
       else if(e.target.name == 'settings'){
-        console.log(2)
+        var setting = cc.instantiate(this.setting)
+        parent.addChild(setting);
+        var bgManager = setting.getChildByName('bg');
+        var soundEffectManager = setting.getChildByName('effect');
+        var btn = setting.getChildByName('true');
+
+        //显示当前音量
+        bgManager.getComponent(cc.Slider).progress = this.AudioPlayer.getBgVolume();
+        soundEffectManager.getComponent(cc.Slider).progress = this.AudioPlayer.getEffectVolume();
+
+        //设置背景音乐音量大小
+        bgManager.on('slide',function(e){
+          this.AudioPlayer.setBgVolume(e.progress)
+        },this)
+
+        //设置音效音乐音量大小
+        soundEffectManager.on('slide',function(e){
+          this.AudioPlayer.setEffectVolume(e.progress)
+        },this)
+
+        btn.on('click',function(e){
+          this.AudioPlayer.playGeneralClick()
+          this.closeMenu(parent)
+        },this)
       }
       else if(e.target.name == 'mainMenu'){
-        var confirm = cc.instantiate(this.conformBack);
+        var confirm = cc.instantiate(this.confirmBack);
         parent.addChild(confirm)
         var children = confirm.children;
         for(let i = 1; i < children.length; i++){
           children[i].on(cc.Node.EventType.TOUCH_START,function(e){
+            this.AudioPlayer.playGeneralClick()
             if(e.target.name == "true"){
               com.data.restoreData()
               cc.director.loadScene("SenceEnter")
             }
             else if(e.target.name == "false"){
-              this.doInterval();
-              parent.destroy();
+              this.closeMenu(parent)
             }
           },this)
         }
@@ -243,7 +286,14 @@ cc.Class({
         */
       }
     },
-
+    closeMenu(parent){
+      this.doInterval();
+      parent.destroy();
+      var nowSence = cc.director.getScene();
+      if(nowSence.name == "SenceCook"){
+        this.AudioPlayer.playBarbecueSound();
+      }
+    },
     getTime(){
       var str = this.sun.string;
 

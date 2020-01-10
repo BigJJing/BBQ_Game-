@@ -4,7 +4,7 @@ module.exports = {
 
   data: {
     //本场游戏时间:10min = 600s
-    timeForGame:30,
+    timeForGame:600,
     //显示的时间
     timeForGameDisplay:"00:00",
     //拥有的钱
@@ -48,12 +48,12 @@ module.exports = {
           type:"kind",
           appearance:""
         },
-
         food:{},     // {  name: "potatopotatopotato",chinese: "土豆串",price:1,}
         number:1,
         mood:120,  //120秒就离开
-        money:0    //支付的费用
-        evaluation:type   //评价：type:选择最严重的(完美："tasteGood",食物错了："falseFood",没熟："uncooked"，烤糊了:"thanCooked")
+        money:0,    //支付的费用
+        evaluation:type,   //评价：type:选择最严重的(完美："tasteGood",食物错了："falseFood",没熟："uncooked"，烤糊了:"thanCooked")
+        isTalk:false,     //是否正在对话
       }
     */
     guests:[
@@ -89,6 +89,7 @@ module.exports = {
       timeForGuest: 100, //每n秒（5的倍数）内出现一个人，用来确定游戏的难度
     },
     clearTime(){
+      console.log("clear Interval")
       clearInterval(this.timer)
     },
     changeAllInCommon(){
@@ -110,7 +111,10 @@ module.exports = {
         if(str !== "{}"){
           if(this.guests[j].mood <= 0){
             //离开
-            this.leaveGuest.push(this.guests[j])
+            if(this.guests[j].isTalk == false){
+              this.leaveGuest.push(this.guests[j])
+            }
+
           }
           else{
             this.guests[j].mood -= 5;
@@ -135,6 +139,7 @@ module.exports = {
         this.guests[arr[num]].mood = 150;
         this.guests[arr[num]].money = 0;
         this.guests[arr[num]].evaluation = "tasteGood";
+        this.guests[arr[num]].isTalk = false;
         return arr[num]
       }
       else{

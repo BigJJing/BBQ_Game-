@@ -16,36 +16,41 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-    //  cc.sys.localStorage.removeItem('userData')
+    //cc.sys.localStorage.removeItem('userData')
       var userData = JSON.parse(cc.sys.localStorage.getItem('userData'))
       console.log(userData)
-
-
       if(userData == null){
-        console.log(2)
         var name = cc.instantiate(this.nameing);
         this.node.addChild(name);
-
         var input = name.children[2];
-        console.log(input)
         input.on('editing-return',this.doNaming,name)
       }
       else{
         var dayStr = "第" + userData.day + "天";
         this.enterBtn.node.children[0].children[0].getComponent(cc.Label).string = dayStr;
-        console.log(1)
       }
+      //监听按钮
       this.enterBtn.node.on('click',this.enter,this)
+      //播放背景音乐
+      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+      console.log(this.AudioPlayer)
+      this.AudioPlayer.playBgMusic();
+
     },
 
     start () {
 
     },
     //进入第n天
-    enter: function(){
-      var userData = JSON.parse(cc.sys.localStorage.getItem('userData'))
+    enter: function(e){
+      //点击鼠标声音
+      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+      this.AudioPlayer.playGeneralClick();
+
+      //进入游戏
+      var userData = JSON.parse(cc.sys.localStorage.getItem('userData'));
       com.data.money = userData.money;
-      cc.director.loadScene("SenceCook")
+      cc.director.loadScene("SenceCook");
       /*
       var that = this;
       cc.director.preloadScene("SenceCook", function () {
@@ -70,8 +75,8 @@ cc.Class({
           day: 1,
           money: 10,
           setting: {
-            bgMusic: 5,   //0-10
-            soundEffect: 5, //0-10
+            bgMusic: 0.5,   //0-10
+            soundEffect: 0.5, //0-10
           }
         }
         cc.sys.localStorage.setItem('userData', JSON.stringify(userData));

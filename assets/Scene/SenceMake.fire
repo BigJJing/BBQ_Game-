@@ -1317,8 +1317,11 @@
     "menu": {
       "__uuid__": "1a9cd465-d2fc-48ae-ab72-c1cd991cf8c2"
     },
-    "conformBack": {
+    "confirmBack": {
       "__uuid__": "12b9d62b-9ad8-42e8-8a5b-0b4e66f0c64c"
+    },
+    "setting": {
+      "__uuid__": "391b1371-c470-4fe6-a706-432d6b7821ec"
     },
     "menuBtn": {
       "__id__": 41
@@ -1835,8 +1838,8 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 196.504,
-      "y": 612.611,
+      "x": 207,
+      "y": 612,
       "z": 0
     },
     "_scale": {
@@ -3032,6 +3035,7 @@
     },
     "characters": null,
     "evaluationGuest": null,
+    "orderGuest": null,
     "_id": "cfcjSBCV9EwI2u6MjiNP91"
   },
   {

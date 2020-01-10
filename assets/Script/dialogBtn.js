@@ -22,6 +22,7 @@ cc.Class({
           type: cc.Node
         },
         evaluationGuest:null,
+        orderGuest:null,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -34,7 +35,17 @@ cc.Class({
 
     // update (dt) {},
     mouseStart: function(){
+      //音效
+      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+      this.AudioPlayer.playPropClick();
+      if(this.orderGuest !== null){
+        let index = com.data.findGuestByName(this.orderGuest.guest.name);
+        com.data.guests[index].isTalk = false;
+        this.orderGuest = null
+      }
       if(this.evaluationGuest != null){
+        let index = com.data.findGuestByName(this.evaluationGuest.guest.name);
+        com.data.guests[index].isTalk = false;
         //离开
         com.data.leaveGuest.push(this.evaluationGuest);
         this.characters.getComponent('character').leave();
@@ -42,5 +53,7 @@ cc.Class({
       }
       this.dialog.opacity = 0
       this.node.getComponent(cc.Button).interactable = false;
+
+      console.log(com.data.guests)
     }
 });

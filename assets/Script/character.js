@@ -155,6 +155,9 @@ cc.Class({
     },
     //发起对话
     guestTalk: function(e) {
+      //音效
+      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+      this.AudioPlayer.playPropClick();
       var node = e.target;
       var name = node.name;
       var guest = characters.data.findByName(name);
@@ -178,9 +181,10 @@ cc.Class({
       this.dialogBtn.getComponent(cc.Button).interactable = true;
       //this.order.string = guestTalk
       //var guestIndex = com.data.findGuestByName(name)
-      var guestIndex = com.data.findGuestByName(name)
+      var guestIndex = com.data.findGuestByName(name);
       com.data.guests[guestIndex].food = food;
       com.data.guests[guestIndex].number = number[0];
+      com.data.guests[guestIndex].isTalk = true;
       com.data.saveDialog(guest.appearance,guestTalk)
       //销毁对话提示信息
       for(let i = 0; i < node.childrenCount; i++){
@@ -189,10 +193,16 @@ cc.Class({
         }
       }
       node.off(cc.Node.EventType.TOUCH_START,this.guestTalk,this);
+
+      var dialogBtn = this.dialogBtn.getComponent('dialogBtn')
+      dialogBtn.orderGuest = com.data.guests[guestIndex]
+
+      console.log(com.data.guests)
     },
 
     //客人评价
     guestEvaluation: function(guest) {
+      guest.isTalk = true;
       if(guest.evaluation == "tasteGood"){
         com.data.praiseNum ++;
       }
@@ -205,6 +215,8 @@ cc.Class({
       //this.leave();
       var dialogBtn = this.dialogBtn.getComponent('dialogBtn')
       dialogBtn.evaluationGuest = guest
+
+      console.log(com.data.guests)
     },
     findLeaveGuest: function(){
       for(var j = 0; j < com.data.guests.length; j++){
@@ -217,7 +229,7 @@ cc.Class({
               }
             }
             var guestMood = com.data.guests[j].mood;
-            if(guestMood <= 0 && node){
+            if(guestMood <= 0 && node && com.data.guests[j].isTalk == false){
               //离开
               com.data.leaveGuest.push(com.data.guests[j]);
               this.leave();
@@ -295,13 +307,17 @@ cc.Class({
           com.data.guests[index] = {};
           com.data.leaveGuest.splice(0,1);
           console.log(com.data.guestsNum);
-          if(com.data.guestsNum == 0 && com.data.timeForGame > 0){
+          if(com.data.guestsNum === 0 && com.data.timeForGame > 0){
+            console.log(com.data.guestsNum)
+            console.log(com.data.timeForGame)
             setTimeout(()=>{
               this.showGuest();
               com.data.guestsNum++;
             },500)
           }
-          else{
+          else if(com.data.guestsNum === 0 && com.data.timeForGame <= 0){
+            console.log(com.data.guestsNum)
+            console.log(com.data.timeForGame)
             setTimeout(()=>{
               //游戏结束 ： 显示今天的营业详情
               console.log("Game Over");
@@ -334,6 +350,7 @@ cc.Class({
               praise.string = com.data.praiseNum;
               //保存游戏数据
               userData.day++;
+              com.data.money -= 10
               userData.money = com.data.money;
               cc.sys.localStorage.setItem('userData',JSON.stringify(userData));
               children[7].on('click',function(){
