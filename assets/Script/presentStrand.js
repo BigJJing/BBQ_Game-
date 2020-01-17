@@ -106,23 +106,33 @@ cc.Class({
         var object = {};
         object.type = data.strand;
         var returnData = this.getNumber(data.strand);
-        //没增加
         var height = this.basket.height- 30;
-        if(returnData.length == 1){
-          if(data.strands.length == data.maxBasketSize){
+        //不存在此类食物
+        if(returnData.index == -1){
+          if(data.strands.length == data.maxBasketSize ){
             this.presentStrand.x = this.x;
             this.presentStrand.y = this.y;
             return;
           }
           else{
+            object.index = data.getBasketPosition();
             object.length = returnData.length;
             data.strands.push(object);
-            var y = height/2 - height/data.maxBasketSize * (data.strands.length - 1) - 20;
+            //var y = height/2 - height/data.maxBasketSize * (data.strands.length - 1) - 20;
+            var y = height/2 - height/data.maxBasketSize * object.index - 20;
           }
         }
+        //存在此类食物
         else{
-          data.strands[returnData.index].length++;
-          var y = height/2 - height/data.maxBasketSize * returnData.index + 5*(returnData.length-1) - 20;
+          if(data.strands[returnData.index].length < data.maxSameFoodInBasket){
+            data.strands[returnData.index].length++;
+            var y = height/2 - height/data.maxBasketSize * data.strands[returnData.index].index + 5*(returnData.length-1) - 20;
+          }
+          else{
+            this.presentStrand.x = this.x;
+            this.presentStrand.y = this.y;
+            return;
+          }
         }
         data.strand=[];
         data.presentSize=0;

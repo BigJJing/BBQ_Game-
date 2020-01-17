@@ -34,6 +34,7 @@ cc.Class({
     },
 
     onLoad () {
+      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
       //计算人物位置
       //获取盘子的位置（客人位置要和盘子的位置对齐）
       com.data.isStopGuestTimer = true;
@@ -49,6 +50,7 @@ cc.Class({
         //cocos自带计时器：绑定组件，只执行一次，2s后执行
         component.scheduleOnce(function() {
            // 这里的 this 指向 component
+           this.AudioPlayer.playGuestComing();
            this.showGuest();
        }, 2);
       }
@@ -156,12 +158,10 @@ cc.Class({
     //发起对话
     guestTalk: function(e) {
       //音效
-      this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
       this.AudioPlayer.playPropClick();
       var node = e.target;
       var name = node.name;
       var guest = characters.data.findByName(name);
-      console.log(dialog)
       var food = foodMenu.data.getFood();
       var talk = dialog.data.getGreeting(guest.type);
       var number = dialog.data.getNumber(guest.type);
@@ -196,8 +196,6 @@ cc.Class({
 
       var dialogBtn = this.dialogBtn.getComponent('dialogBtn')
       dialogBtn.orderGuest = com.data.guests[guestIndex]
-
-      console.log(com.data.guests)
     },
 
     //客人评价
@@ -215,8 +213,6 @@ cc.Class({
       //this.leave();
       var dialogBtn = this.dialogBtn.getComponent('dialogBtn')
       dialogBtn.evaluationGuest = guest
-
-      console.log(com.data.guests)
     },
     findLeaveGuest: function(){
       for(var j = 0; j < com.data.guests.length; j++){
@@ -250,9 +246,6 @@ cc.Class({
         }
     },
     leave: function(){
-      console.log("leave")
-      console.log(com.data.guests)
-      console.log(com.data.leaveGuest.length)
       while(com.data.leaveGuest.length != 0){
         var leaveOne = com.data.leaveGuest[0];
         var allGuests = this.node.children;
@@ -268,7 +261,6 @@ cc.Class({
           }
         }
         var index = com.data.findGuestByName(leaveOne.guest.name);
-        console.log(leaveOne.guest.name)
         if(index === false){
           console.log("error: can't find leave guest named" + leaveOne.guest.name)
         }
@@ -283,7 +275,8 @@ cc.Class({
           for(let j = 0; j <this.dishes.children[index].childrenCount; j++){
             this.dishes.children[index].children[j].destroy();
           }
-          //付钱
+          //收钱
+          this.AudioPlayer.playMoneyCollect();
           var money = com.data.money;
           var endMoney = parseFloat(com.data.guests[index].money) + money;
           var that = this;
@@ -299,38 +292,32 @@ cc.Class({
             else{
               clearInterval(moneyTimer);
               com.data.money = parseFloat(endMoney);
-              console.log(com.data.money)
               that.money.string = parseFloat(endMoney).toFixed(2) + ""
             }
           },100)
 
           com.data.guests[index] = {};
           com.data.leaveGuest.splice(0,1);
-          console.log(com.data.guestsNum);
           if(com.data.guestsNum === 0 && com.data.timeForGame > 0){
-            console.log(com.data.guestsNum)
-            console.log(com.data.timeForGame)
             setTimeout(()=>{
               this.showGuest();
               com.data.guestsNum++;
+              this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+              this.AudioPlayer.playGuestComing();
             },500)
           }
           else if(com.data.guestsNum === 0 && com.data.timeForGame <= 0){
-            console.log(com.data.guestsNum)
-            console.log(com.data.timeForGame)
             setTimeout(()=>{
               //游戏结束 ： 显示今天的营业详情
-              console.log("Game Over");
+              this.AudioPlayer.stopBarbecueSound();
+              this.AudioPlayer.playGameOver();
               com.data.clearTime();
               var account = cc.instantiate(this.account);
               account.parent = this.node.parent.parent;
               var children = account.children;
-              console.log(children);
               var userData = JSON.parse(cc.sys.localStorage.getItem('userData'));
-              console.log(userData);
               //天数
               var dayNum = children[1].children[1].getComponent(cc.Label);
-              console.log(dayNum)
               dayNum.string = userData.day;
               //销售额
               var total = children[3].getComponent(cc.Label);
@@ -354,6 +341,8 @@ cc.Class({
               userData.money = com.data.money;
               cc.sys.localStorage.setItem('userData',JSON.stringify(userData));
               children[7].on('click',function(){
+                this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
+                this.AudioPlayer.playPropClick();
                 //清空所有的数据
                 com.data.restoreData()
                 //回退到第几天页面
@@ -372,7 +361,6 @@ cc.Class({
           var mood = guests[i].mood;
           for(var j = 0; j < this.node.childrenCount; j++){
             var thisGuest = this.node.children[j]
-            //console.log(thisGuest)
             if(thisGuest.name == guests[i].guest.name){
               for(var k = 0; k < thisGuest.childrenCount; k++){
                 if(thisGuest.children[k].name != "talk"){

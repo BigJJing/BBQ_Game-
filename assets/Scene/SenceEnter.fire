@@ -134,6 +134,15 @@
     "prop_click": {
       "__uuid__": "4256d19b-21e9-48f6-9c80-4ae4d4de81c1"
     },
+    "guest_coming": {
+      "__uuid__": "af03b6c7-c838-4283-b38a-f8a5b5599401"
+    },
+    "money_collect": {
+      "__uuid__": "dad19a64-ad6a-4747-9cd6-360d8aac67a4"
+    },
+    "game_over": {
+      "__uuid__": "17c967e5-2bf0-48f6-932e-42ff0055a57d"
+    },
     "_id": "253Sjf5cxMEYLLZ6M3CN9M"
   },
   {
@@ -248,7 +257,7 @@
       "__type__": "cc.Vec3",
       "x": 0,
       "y": 0,
-      "z": 525.6774200971543
+      "z": 535.2036995387831
     },
     "_scale": {
       "__type__": "cc.Vec3",

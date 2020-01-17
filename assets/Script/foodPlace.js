@@ -33,9 +33,13 @@ cc.Class({
         default: null,
         type: cc.Node
       },
+      trash:{
+        default: null,
+        type: cc.Node
+      },
       targetOriginX: 0,
       targetOriginY: 0,
-
+      isTrashOpen:false
     },
 
     onLoad () {
@@ -72,6 +76,26 @@ cc.Class({
         var delta = e.touch.getDelta();
         target.x += delta.x;
         target.y += delta.y;
+      }
+      //如果移动到垃圾桶，则打开垃圾桶
+      var trashLeft =  this.trash.x - this.trash.width/2;
+      var trashRight = this.trash.x + this.trash.width/2;
+      var trashTop = this.trash.y + this.trash.height/2 - this.grill.y;
+      var trashBottom = this.trash.y - this.trash.height/2 - this.grill.y ;
+
+      var anim = this.trash.getComponent(cc.Animation);
+      if(target.x >= trashLeft && target.x < trashRight && target.y >= trashBottom && target.y < trashTop){
+        //打开垃圾桶
+        if(!this.isTrashOpen){
+          this.isTrashOpen = true;
+          anim.play('trashOpen');
+        }
+      }
+      else{
+        if(this.isTrashOpen){
+          this.isTrashOpen = false;
+          anim.play('trashClose');
+        }
       }
 
     },
@@ -133,22 +157,23 @@ cc.Class({
           var grillRight = this.grill.width/2 - 50;
           var grillTop =  this.grill.height/2;
           var grillBottom = - this.grill.height/2;
+
+          var trashLeft =  this.trash.x - this.trash.width/2;
+          var trashRight = this.trash.x + this.trash.width/2;
+          var trashTop = this.trash.y + this.trash.height/2 - this.grill.y;
+          var trashBottom = this.trash.y - this.trash.height/2 - this.grill.y ;
+
           //放在烤炉上
           if(target.x >= grillLeft && target.x <= grillRight && target.y <= grillTop && target.y >= grillBottom){
             //检查是否把节点移到了食物上
             var foods = this.node.children;
             var targetLeft = target.x - target.width/2;
             var targetRight = target.x + target.width/2;
-            console.log(targetRight - targetLeft);
-            console.log(foods)
             for(let i = 0; i < foods.length; i++){
               var foodLeft = foods[i].x - foods[i].width/2;
               var foodRight = foods[i].x + foods[i].width/2;
-              console.log(foodRight-foodLeft)
               if(!(targetRight < foodLeft || targetLeft > foodRight) && foods[i] != target){
                 //位置复原
-                console.log(targetRight,foodLeft)
-                console.log(foods[i])
                 target.x = this.targetOriginX;
                 target.y = this.targetOriginY;
                 target.zIndex --;
@@ -158,6 +183,21 @@ cc.Class({
             //移动到新位置
             target.y = 0;
             return;
+          }
+          //放在垃圾桶里
+          else if(target.x >= trashLeft && target.x < trashRight && target.y >= trashBottom && target.y < trashTop){
+            var action = cc.spawn(cc.scaleTo(0.2,0,0),cc.moveBy(0.2,0,0)).easing(cc.easeCubicActionOut())
+            var anim = this.trash.getComponent(cc.Animation);
+            target.runAction(action)
+            this.isTrashOpen = false;
+            anim.play('trashClose');
+
+            target.off(cc.Node.EventType.TOUCH_MOVE, this.mouseMove, this);
+            target.off(cc.Node.EventType.TOUCH_END, this.mouseEnd, this);
+            //在action播放完成后再销毁节点，否则action会跳过
+            setTimeout(function () {
+              target.destroy();
+            }.bind(this), 200);
           }
           else{
             var guestsPosition = []
@@ -174,16 +214,18 @@ cc.Class({
                 left: guestLeft,
                 right: guestRight
               })
+              //食物递给客人
               if(target.x >= guestLeft && target.x <= guestRight && target.y <= guestTop && target.y >= guestBottom){
                 var guest = com.data.guests[com.data.findGuestByName(guestNode.name)];
                 //判斷是否已經點單
-                console.log(guest)
                 if(guest.food){
                   var dish = this.dishes.children[guest.id];
                   var timerX = setTimeout(function(){
                     target.parent = dish;
                     target.zIndex = dish.zIndex + 1;
-                    var action = cc.spawn(cc.scaleTo(0.2,0.2,0.2),cc.moveTo(0.2,0,0)).easing(cc.easeCubicActionOut());
+                    var w = (dish.width/2 -20);
+                    let foodX = -w + Math.floor(w * Math.random()) + 20
+                    var action = cc.spawn(cc.scaleTo(0.2,0.2,0.2),cc.moveTo(0.2,foodX,0)).easing(cc.easeCubicActionOut());
                     target.runAction(action);
                     clearTimeout(timerX)
                   },0)
@@ -284,10 +326,7 @@ cc.Class({
     //添加调料
     addSeasoning: function(target,type){
       var color = "";
-      if(type == ""){
-        console.error("no seasoning");
-      }
-      else if(type == "paprika" || type == "cuminPowder" ){
+      if(type == "paprika" || type == "cuminPowder" ){
         switch(type){
           case "paprika":
             color = "bf0000";

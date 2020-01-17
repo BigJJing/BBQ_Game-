@@ -4,7 +4,7 @@ module.exports = {
 
   data: {
     //本场游戏时间:10min = 600s
-    timeForGame:600,
+    timeForGame:200,
     //显示的时间
     timeForGameDisplay:"00:00",
     //拥有的钱
@@ -12,7 +12,7 @@ module.exports = {
     //好评数
     praiseNum:0,
     strand: [],   //当前串
-    strands:[],   //所有串 [{type:"typeName","length":Number}]
+    strands:[],   //放在篮子里的串 [{type:"typeName",length:Number,index:Number}]
     //在烤的串
     /* [{
           name:"name",  //对应每个target.name, 唯一标识
@@ -22,7 +22,6 @@ module.exports = {
           seasoning:["oil",...]
         }]
     */
-    strands:[],
     //在烤炉上的串
     strandsInGrill:[],
     //当前串(在处理板上)的大小的
@@ -82,6 +81,7 @@ module.exports = {
       mutton: 6,
     },
     maxBasketSize: 3, //篮子中能放食物的最多种类
+    maxSameFoodInBasket:5,  //篮子里每种类型的食物最多能叠加个数
     //游戏设置
     //一个时间游戏计时器：随机在某个时间点来客人
     settings:{
@@ -161,10 +161,28 @@ module.exports = {
         content:content
       })
     },
+    //返回篮子里面的空位
+    getBasketPosition(){
+      if(this.strands.length == 0){
+        return 0;
+      }
+      else{
+        var used = [];
+        for(let i = 0; i < this.strands.length; i++){
+          used.push(this.strands[i].index);
+        }
+        for(let i = 0; i < this.maxBasketSize; i++){
+          if(used.indexOf(i) == -1){
+            return i;
+          }
+        }
+      }
+      console.log("error basket position")
+    },
     //还原数据
     restoreData(){
       this.timeForGameDisplay = "00:00";
-      this.timeForGame = 30;
+      this.timeForGame = 200;
       this.praiseNum = 0;
       this.strand = [];
       this.strands = [];
@@ -174,6 +192,7 @@ module.exports = {
       this.foodPlace = null;
       this.presentStrand = null;
       this.guest = null;
+      this.basket = null;
       this.timer = null;
       this.timeShow = 0;
       this.guests = [{},{},{},{}];

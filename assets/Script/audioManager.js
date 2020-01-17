@@ -32,14 +32,34 @@ cc.Class({
           url: cc.AudioClip,
           default: null
         },
+        //来客人
+        guest_coming:{
+          url: cc.AudioClip,
+          default: null
+        },
+        //收钱
+        money_collect:{
+          url: cc.AudioClip,
+          default: null
+        },
+        //游戏结束
+        game_over:{
+          url: cc.AudioClip,
+          default: null
+        }
     },
     onLoad () {
       cc.game.addPersistRootNode(this.node);
     },
     playBgMusic() {
       var userData = JSON.parse(cc.sys.localStorage.getItem('userData'))
-       var musicLevel = userData.setting.bgMusic;
-       this.bgMusicChannel = cc.audioEngine.play(this.bgMusic,true,musicLevel)
+      if(userData){
+        var musicLevel = userData.setting.bgMusic;
+        this.bgMusicChannel = cc.audioEngine.play(this.bgMusic,true,musicLevel)
+      }
+      else{
+        this.bgMusicChannel = cc.audioEngine.play(this.bgMusic,true,0.5)
+      }
     },
 
     stopBgMusic() {
@@ -86,6 +106,20 @@ cc.Class({
     playPropClick(){
       var soundLevel = this.getEffectVolume();
       cc.audioEngine.play(this.general_click,false,soundLevel);
-    }
-
+    },
+    //客人出现
+    playGuestComing(){
+      var soundLevel = this.getEffectVolume();
+      cc.audioEngine.play(this.guest_coming,false,soundLevel);
+    },
+    //收钱
+    playMoneyCollect(){
+      var soundLevel = this.getEffectVolume();
+      cc.audioEngine.play(this.money_collect,false,soundLevel);
+    },
+    //游戏结束
+    playGameOver(){
+      var soundLevel = this.getEffectVolume();
+      cc.audioEngine.play(this.game_over,false,soundLevel);
+    },
 });

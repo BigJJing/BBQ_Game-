@@ -44,6 +44,10 @@ cc.Class({
           default: null,
           type: cc.Node
         },
+        dish:{
+          default: null,
+          type: cc.Node
+        },
         money:{
           default: null,
           type: cc.Label
@@ -61,37 +65,49 @@ cc.Class({
       //音效
       this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
       var nowSence = cc.director.getScene();
-      if(nowSence.name == "SenceCook"){
-        this.AudioPlayer.playBarbecueSound();
-      }
-      else{
-        this.AudioPlayer.stopBarbecueSound();
-      }
       //显示时间
       this.sun.string = com.data.timeForGameDisplay;
       if(com.data.timeForGame <= 0){
         this.sun.node.color = new cc.Color().fromHEX('#FF0000');
       }
-
       //money
       this.money.string = com.data.money.toFixed(2);
       //篮子里的食物
       var basket = com.data.basket;
       if(basket !== null && basket.childrenCount !== 0){
         for(var i=0;i<basket.childrenCount;i++){
-          var node = cc.instantiate(basket.children[i])
+          let node = cc.instantiate(basket.children[i])
           node.parent = this.basket;
         }
       }
-      //烤架上的食物
-      var foodPlace = com.data.foodPlace;
-      if(foodPlace !== null && foodPlace.childrenCount !== 0){
-        for(var i=0;i<foodPlace.childrenCount;i++){
-          var node = cc.instantiate(foodPlace.children[i])
-          node.parent = this.foodPlace;
+      if(nowSence.name == "SenceCook"){
+        this.AudioPlayer.playBarbecueSound();
+        //烤架上的食物
+        var foodPlace = com.data.foodPlace;
+        if(foodPlace !== null && foodPlace.childrenCount !== 0){
+          for(var i = 0;i < foodPlace.childrenCount; i++){
+            let node = cc.instantiate(foodPlace.children[i])
+            node.parent = this.foodPlace;
+          }
+          //this.foodPlace.children = foodPlace.children;
         }
-        //this.foodPlace.children = foodPlace.children;
+
+        //烤架上的食物
+        var dish = com.data.dish;
+        if(dish){
+            let node = cc.instantiate(dish);
+            for(let i = 0; i < node.children.length; i++){
+              var foods = node.children[i].children;
+              for(let j = 0; j < foods.length; j++){
+                foods[j].parent = this.dish.children[i]
+              }
+            }
+          }
       }
+      else{
+        this.AudioPlayer.stopBarbecueSound();
+      }
+
       //键盘监听 A，D键切换场景
       cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.changeSence, this);
       //监听对话记录菜单点击事件
@@ -113,8 +129,6 @@ cc.Class({
         this.sun.string = this.getTime();
         com.data.timeForGameDisplay = this.sun.string;
         console.log(com.data.timeForGame)
-        console.log("num: "+ com.data.guestsNum)
-        console.log(this.sun.node)
         if(com.data.timeForGame <= 0){
           this.sun.node.color = new cc.Color().fromHEX('#FF0000');
         }
@@ -133,6 +147,7 @@ cc.Class({
             if(com.data.guestsNum < 4){
               com.data.guestsNum ++;
               guestScript.showGuest();
+              this.AudioPlayer.playGuestComing();
             }
           }
           //客人离开
@@ -145,6 +160,7 @@ cc.Class({
             com.data.timeShow = 0;
             if(com.data.guestsNum < 4){
               com.data.guestsNum ++;
+              this.AudioPlayer.playGuestComing();
             }
           }
           com.data.changeMood();
@@ -155,12 +171,14 @@ cc.Class({
     //切换场景
     changeSence: function(e){
       com.data.clearTime();
+      console.log("clear 2")
       var nowSence = cc.director.getScene();
       if(e.keyCode == 65 || e.keyCode == 68){
         com.data.basket = cc.instantiate(this.basket);
         if(nowSence.name == "SenceCook"){
           com.data.foodPlace = cc.instantiate(this.foodPlace);
           com.data.guest = cc.instantiate(this.guest);
+          com.data.dish = cc.instantiate(this.dish)
           cc.director.loadScene("SenceMake")
         }
         else{
@@ -222,6 +240,7 @@ cc.Class({
       var menu = cc.instantiate(this.menu);
       this.node.parent.addChild(menu);
       com.data.clearTime();
+      console.log("clear 3")
       var btns = menu.children[0].children;
       for(var i = 0; i < btns.length; i++){
         btns[i].on(cc.Node.EventType.TOUCH_START, this.selectMenuBtn, this)
@@ -270,6 +289,7 @@ cc.Class({
           children[i].on(cc.Node.EventType.TOUCH_START,function(e){
             this.AudioPlayer.playGeneralClick()
             if(e.target.name == "true"){
+              this.AudioPlayer.playGeneralClick()
               com.data.restoreData()
               cc.director.loadScene("SenceEnter")
             }
