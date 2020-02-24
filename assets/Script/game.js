@@ -62,6 +62,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+      console.log(1)
       //音效
       this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
       var nowSence = cc.director.getScene();
@@ -114,6 +115,8 @@ cc.Class({
       this.dialogBtn.on(cc.Node.EventType.TOUCH_START, this.openDialog, this)
       //监听菜单
       this.menuBtn.on(cc.Node.EventType.TOUCH_START,this.openMenu,this)
+
+      console.log(2)
     },
 
     start () {

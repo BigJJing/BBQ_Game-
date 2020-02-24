@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "sugar",
+    "texture": "5eFDqYjO9Jham+9atf+yxD",
+    "rect": [
+      7,
+      0,
+      246,
+      377
+    ],
+    "offset": [
+      -11,
+      0
+    ],
+    "originalSize": [
+      282,
+      377
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

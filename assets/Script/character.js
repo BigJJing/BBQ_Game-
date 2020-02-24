@@ -341,13 +341,12 @@ cc.Class({
               userData.money = com.data.money;
               cc.sys.localStorage.setItem('userData',JSON.stringify(userData));
               children[7].on('click',function(){
-                this.AudioPlayer = cc.find("Audio").getComponent("audioManager");
                 this.AudioPlayer.playPropClick();
                 //清空所有的数据
                 com.data.restoreData()
                 //回退到第几天页面
                 cc.director.loadScene("SenceEnter")
-              })
+              },this)
             },1000)
           }
         }
